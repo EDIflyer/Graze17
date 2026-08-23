@@ -61,15 +61,15 @@ public class NewsRobNotificationManager implements IEntryModelUpdateListener
     Intent i = new Intent(Intent.ACTION_VIEW, uri);
     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-//    Notification n = new Notification(R.drawable.gen_auto_notification_icon, "graze16 has been updated", new Date().getTime());
-//    n.setLatestEventInfo(context, "graze16 has been updated", "Tap to open release notes.", PendingIntent.getActivity(context, 0, i, 0));
+//    Notification n = new Notification(R.drawable.gen_auto_notification_icon, "graze17 has been updated", new Date().getTime());
+//    n.setLatestEventInfo(context, "graze17 has been updated", "Tap to open release notes.", PendingIntent.getActivity(context, 0, i, 0));
 //    n.flags |= Notification.FLAG_AUTO_CANCEL;
 
     Notification.Builder builder = new Notification.Builder(context)
       .setSmallIcon(R.drawable.gen_auto_notification_icon)
-      .setTicker("graze16 has been updated")
+      .setTicker("graze17 has been updated")
       .setWhen(new Date().getTime())
-      .setContentTitle("graze16 has been updated")
+      .setContentTitle("graze17 has been updated")
       .setContentText("Tap to open release notes.")
       .setContentIntent(PendingIntent.getActivity(context, 0, i, 
         android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S ? PendingIntent.FLAG_IMMUTABLE : 0));

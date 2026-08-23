@@ -1011,7 +1011,7 @@ public class EntriesRetriever implements BackendProvider
 
       if (getEntryManager().isGrazeRssOnlySyncingEnabled())
       {
-        job.setJobDescription("Fetching 'graze16' articles.");
+        job.setJobDescription("Fetching 'graze17' articles.");
         requestArticlesFromGoogleReader(job, fetchCtx, httpClient, NEWSROB_LABEL, entryManager.getNewsRobSettings().getStorageCapacity(),
             otUrlParameter + (entryManager.shouldOnlyUnreadArticlesBeDownloaded() ? "&" + EXCLUDE_READ : "")); // +
         // (true

@@ -187,7 +187,7 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
 
   private void openGithubRepository()
   {
-    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EDIflyer/Graze16"));
+    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EDIflyer/Graze17"));
     startActivity(browserIntent);
   }
 }

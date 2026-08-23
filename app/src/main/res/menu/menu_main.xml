@@ -5,6 +5,7 @@
         android:id="@+id/menu_sync"
         android:title="Sync"
         android:icon="@drawable/ic_sync_white_32dp"
+        app:actionLayout="@layout/menu_sync_action"
         app:showAsAction="always"/>
     <item
         android:id="@+id/menu_mark_all_read"

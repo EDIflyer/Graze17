@@ -1249,7 +1249,6 @@ public class DB extends SQLiteOpenHelper
   {
 
     String sql = context.getString(R.string.sql_get_ids_to_delete);
-    sql = Pattern.compile("-- MARK BEGIN.*?-- MARK END", Pattern.DOTALL).matcher(sql).replaceAll("");
 
     Cursor cursor = getReadOnlyDb().rawQuery(sql,
         new String[] { Integer.toString(keepStarred), Integer.toString(keepShared), Integer.toString(keepNotes), Integer.toString(capacity) });

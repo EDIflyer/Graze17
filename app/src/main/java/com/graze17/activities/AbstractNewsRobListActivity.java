@@ -127,6 +127,8 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
   private ProgressBar         progressBar;
   private TextView            progressDescription;
   private LinearLayout progressContainer;
+  private boolean             progressPanelManuallyHiddenDuringSync;
+  private boolean             syncUiActive;
 
   private GoogleAdsUtil       googleAdsUtil;
 
@@ -141,9 +143,9 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     {
       progressIndicator.setVisibility(View.VISIBLE);
     }
-    else
+    else if (progressContainer == null)
     {
-      // If control panel progress indicator isn't available, show the main data update progress
+      // Only fall back to the centered spinner when the inline progress container is unavailable.
       View dataUpdateProgress = findViewById(R.id.data_update_progress);
       if (dataUpdateProgress != null)
       {
@@ -151,10 +153,19 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
       }
     }
 
-    // Show progress container if available
+    boolean syncInProgress = (entryManager.getCurrentRunningJob() != null) || entryManager.isModelCurrentlyUpdated();
+
+    // Show progress container if available and not intentionally hidden by the user during this sync run
     if (progressContainer != null)
     {
-      progressContainer.setVisibility(View.VISIBLE);
+      if (syncInProgress && progressPanelManuallyHiddenDuringSync)
+      {
+        progressContainer.setVisibility(View.GONE);
+      }
+      else
+      {
+        progressContainer.setVisibility(View.VISIBLE);
+      }
     }
 
     // Update refresh button to show as active sync
@@ -249,11 +260,14 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
       }
       else
       {
-        // Hide alternative progress indicators
-        View dataUpdateProgress = findViewById(R.id.data_update_progress);
-        if (dataUpdateProgress != null)
+        // Hide alternative progress indicators only when fallback mode is used.
+        if (progressContainer == null)
         {
-          dataUpdateProgress.setVisibility(View.INVISIBLE);
+          View dataUpdateProgress = findViewById(R.id.data_update_progress);
+          if (dataUpdateProgress != null)
+          {
+            dataUpdateProgress.setVisibility(View.INVISIBLE);
+          }
         }
         
         // Restore refresh button to normal state  
@@ -446,18 +460,21 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
       public void run()
       {
+        progressPanelManuallyHiddenDuringSync = false;
+        syncUiActive = false;
         updateButtons();
         deactivateProgressIndicator();
 
         if (result instanceof SynchronizeModelSucceeded)
         {
           SynchronizeModelSucceeded succeeded = (SynchronizeModelSucceeded) result;
+          int noOfEntriesFetched = succeeded.getNoOfEntriesFetched();
 
-          if (succeeded.getNoOfEntriesUpdated() > 0)
+          if (succeeded.getNoOfEntriesUpdated() > 0 || noOfEntriesFetched > 0)
           {
             refreshUI();
             Toast.makeText(AbstractNewsRobListActivity.this, 
-                "Sync complete - " + succeeded.getNoOfEntriesUpdated() + " articles updated",
+                "Sync complete - " + noOfEntriesFetched + " new articles downloaded",
                 Toast.LENGTH_SHORT).show();
             // Toast.makeText(AbstractNewsRobListActivity.this,
             // succeeded.getMessage(),
@@ -497,6 +514,8 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
   public void modelUpdateStarted(boolean fastSyncOnly)
   {
+    progressPanelManuallyHiddenDuringSync = false;
+    syncUiActive = true;
     runOnUiThread(refreshUIRunnable);
 
     if (!fastSyncOnly && EntryManager.ACTION_BAR_TOP.equals(entryManager.getActionBarLocation())
@@ -705,6 +724,8 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     super.onCreateOptionsMenu(menu);
     MenuInflater inflater = getMenuInflater();
     inflater.inflate(R.menu.menu_main, menu);
+
+    applySyncMenuState(menu);
     
     // Set the correct initial icon for show/hide toggle
     MenuItem showHideItem = menu.findItem(R.id.menu_show_hide);
@@ -811,8 +832,16 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
         }
         return true;
     } else if (item.getItemId() == R.id.menu_sync) {
-        // Trigger sync functionality
+        boolean syncInProgress = isSyncInProgressForUi();
+        if (syncInProgress) {
+          if (progressContainer != null) {
+            toggleProgressBarVisibility();
+          }
+          return true;
+        }
+
         requestRefresh();
+        supportInvalidateOptionsMenu();
         Toast.makeText(this, "Syncing articles...", Toast.LENGTH_SHORT).show();
         return true;
     } else if (item.getItemId() == R.id.menu_mark_all_read) {
@@ -892,7 +921,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     super.onPostCreate(savedInstanceState);
     Toolbar toolbar = findViewById(R.id.activity_actionbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setTitle("Graze16");
+    getSupportActionBar().setTitle("Graze17");
     getSupportActionBar().setHomeAsUpIndicator(R.drawable.gen_logo_32dp);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     toolbar.setTitleTextColor(Color.WHITE);
@@ -940,6 +969,11 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     progressBar = findViewById(R.id.progress_bar);
     progressDescription = findViewById(R.id.status_text);
     progressContainer = findViewById(R.id.progress_container);
+    View emptyView = findViewById(android.R.id.empty);
+    if (emptyView != null)
+    {
+      getListView().setEmptyView(emptyView);
+    }
 //  }
     getListView().setOnCreateContextMenuListener(this);
     signalBackgroundDataIsTurnedOffOrInAirplaneMode();
@@ -989,6 +1023,15 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
   @Override
   public boolean onPrepareOptionsMenu(Menu menu)
   {
+    applySyncMenuState(menu);
+
+    MenuItem showHideItem = menu.findItem(R.id.menu_show_hide);
+    if (showHideItem != null)
+    {
+      boolean shouldHideReadItems = getDbQuery().shouldHideReadItems();
+      showHideItem.setIcon(shouldHideReadItems ? R.drawable.ic_dot_white_32dp : R.drawable.ic_circle_white_32dp);
+    }
+
 //    boolean canRefresh = getEntryManager().canRefresh();
 //
 //    if (EntryManager.ACTION_BAR_GONE.equals(getEntryManager().getActionBarLocation()))
@@ -1027,6 +1070,46 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 //    menu.findItem(MENU_ITEM_LOGOUT_ID).setEnabled(!getEntryManager().needsSession() && canRefresh);
 
     return super.onPrepareOptionsMenu(menu);
+  }
+
+  private void applySyncMenuState(Menu menu)
+  {
+    MenuItem syncItem = menu.findItem(R.id.menu_sync);
+    if (syncItem == null)
+    {
+      return;
+    }
+
+    final boolean syncInProgress = isSyncInProgressForUi();
+
+    if (syncItem.getActionView() == null)
+    {
+      syncItem.setActionView(R.layout.menu_sync_action);
+    }
+
+    View actionView = syncItem.getActionView();
+    if (actionView == null)
+    {
+      syncItem.setIcon(syncInProgress ? R.drawable.ic_sync_active_32dp : R.drawable.ic_sync_white_32dp);
+      return;
+    }
+
+    View spinner = actionView.findViewById(R.id.sync_action_spinner);
+    View icon = actionView.findViewById(R.id.sync_action_icon);
+    if (spinner != null && icon != null)
+    {
+      spinner.setVisibility(syncInProgress ? View.VISIBLE : View.GONE);
+      icon.setVisibility(syncInProgress ? View.GONE : View.VISIBLE);
+    }
+
+    actionView.setOnClickListener(new View.OnClickListener()
+    {
+      @Override
+      public void onClick(View v)
+      {
+        onOptionsItemSelected(syncItem);
+      }
+    });
   }
 
   @Override
@@ -1111,6 +1194,11 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     {
       PL.log("ANRLA: User requested refresh manually.", this);
     }
+
+    syncUiActive = true;
+
+    // New sync request should start with progress visible unless user hides it again.
+    progressPanelManuallyHiddenDuringSync = false;
 
     // Show progress immediately when user taps refresh
     activateProgressIndicator();
@@ -1385,12 +1473,27 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
   protected void toggleProgressBarVisibility()
   {
+    if (progressContainer == null)
+    {
+      return;
+    }
+
+    boolean syncInProgress = getEntryManager().isModelCurrentlyUpdated() || (getEntryManager().getCurrentRunningJob() != null);
+
     if (progressContainer.getVisibility() == View.VISIBLE)
     {
+      if (syncInProgress)
+      {
+        progressPanelManuallyHiddenDuringSync = true;
+      }
       hideProgressBar();
     }
     else
     {
+      if (syncInProgress)
+      {
+        progressPanelManuallyHiddenDuringSync = false;
+      }
       showProgressBar();
     }
   }
@@ -1405,12 +1508,14 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     }
 
     if (shouldActionBarBeHidden()) {
+      supportInvalidateOptionsMenu();
       return;
     }
     if (refreshButton == null) {
       setupButtons();
     }
     if (refreshButton == null) {
+      supportInvalidateOptionsMenu();
       return;
     }
 
@@ -1447,6 +1552,18 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
       markAllReadButton.setEnabled(shouldMarkAllReadButtonBeEnabled());
       markAllReadButton.setFocusable(markAllReadButton.isEnabled());
     }
+
+    supportInvalidateOptionsMenu();
+  }
+
+  private boolean isSyncInProgressForUi()
+  {
+    boolean backendSyncInProgress = getEntryManager().isModelCurrentlyUpdated() || (getEntryManager().getCurrentRunningJob() != null);
+    if (!backendSyncInProgress)
+    {
+      syncUiActive = false;
+    }
+    return syncUiActive || backendSyncInProgress;
   }
 
   private void updateControlPanelTitle()

@@ -16,6 +16,8 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.graze17.Entry;
 import com.graze17.EntryManager;
 import com.graze17.NewsRob;
@@ -129,7 +131,7 @@ class ArticleViewHelper
             selectedEntry.getFeedId()));
         return true;
       case ArticleViewHelper.MENU_ITEM_REFRESH_CONTENT_ID:
-        Toast.makeText(owningActivity, "The article's content is being removed. graze16 will try to re-download it during the next sync.",
+        Toast.makeText(owningActivity, "The article's content is being removed. graze17 will try to re-download it during the next sync.",
             Toast.LENGTH_LONG).show();
         new Thread(new Runnable()
         {
@@ -248,7 +250,7 @@ class ArticleViewHelper
     }
     message.append("\n\n");
     message.append(selectedEntry.getContent());
-    message.append("\n\nSend via <b>graze16</b>\n</div></body></html>");
+    message.append("\n\nSend via <b>graze17</b>\n</div></body></html>");
     message = new StringBuilder(
         "<html><body><p>Hello<img src=\'http://www.spiegel.de/static/sys/v9/spiegelonline_logo.png\'/> world.</body></html>");
     shareArticleSendIntent.putExtra(Intent.EXTRA_TEXT, Html.fromHtml(String.valueOf(message)));
@@ -396,7 +398,7 @@ class ArticleViewHelper
     }
     else
     {
-      container.setBackgroundDrawable(resources.getDrawable(R.drawable.article_header_background_dark));
+      container.setBackground(ContextCompat.getDrawable(view.getContext(), R.drawable.article_header_background_dark));
     }
 
     // entryTitleView.setTextColor(textColor);
@@ -405,8 +407,11 @@ class ArticleViewHelper
     //
     feedTitleView.setCompoundDrawablePadding(3);
     feedTitleView.setCompoundDrawablesWithIntrinsicBounds(
-        resources.getDrawable(uiHelper.getArticleDownloadIndicatorDrawable(entry.getDownloaded(), entry.getDownloadPref(), resources)), null,
-        null, null);
+        ContextCompat.getDrawable(view.getContext(),
+            uiHelper.getArticleDownloadIndicatorDrawable(entry.getDownloaded(), entry.getDownloadPref(), resources)),
+        null,
+        null,
+        null);
 
     // star check box
     final CheckBox starCheckBox = (CheckBox) view.findViewById(R.id.star_checkbox);

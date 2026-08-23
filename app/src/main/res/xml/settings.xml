@@ -34,13 +34,13 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="settings_always_exact_sync"
-            android:summary="Unselect if you only use graze16 on one device, but not the webapp or other apps."
+            android:summary="Unselect if you only use graze17 on one device, but not the webapp or other apps."
             android:title="Always Use Exact Syncing" />
          <CheckBoxPreference
              android:defaultValue="false"
-             android:key="settings_sync_graze16_only_enabled"
-             android:summary="Sync only articles that in a folder/tag called \&apos;Graze16\&apos;."
-             android:title="Sync \&apos;Graze16\&apos; Only" />
+             android:key="settings_sync_graze17_only_enabled"
+             android:summary="Sync only articles that in a folder/tag called \&apos;Graze17\&apos;."
+             android:title="Sync \&apos;Graze17\&apos; Only" />
 
         <PreferenceCategory android:title="@string/settings_offline" >
             <com.graze17.preference.ListPreference

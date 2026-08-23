@@ -118,7 +118,7 @@ public class OldReaderManager
   public LoginResp login(String email, String password) throws AuthenticationFailedException
   {
     try {
-      Response<LoginResp> response = api.login("graze16", "HOSTED_OR_GOOGLE", "reader", email, password, "json").execute();
+      Response<LoginResp> response = api.login("graze17", "HOSTED_OR_GOOGLE", "reader", email, password, "json").execute();
       LoginResp data = response.body();
       
       if (data != null) {

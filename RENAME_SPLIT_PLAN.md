@@ -3,7 +3,7 @@
 This plan breaks the current broad rename change-set into reviewable commits without using interactive git.
 
 ## Goal
-- Keep `applicationId` unchanged (`com.graze16`) for now.
+- Keep `applicationId` unchanged (`com.graze17`) for now.
 - Keep internal namespace/package migration to `com.graze17`.
 - Isolate risk by area so each commit can be validated independently.
 

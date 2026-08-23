@@ -151,7 +151,7 @@ public class UIHelper
         break;
     }
 
-    int backgroundResource = resources.getIdentifier(resourceName, "drawable", "com.graze17");
+    int backgroundResource = resources.getIdentifier(resourceName, "drawable", entryManager.getContext().getPackageName());
     resourceIdCache[cacheKey] = backgroundResource;
     return backgroundResource;
   }

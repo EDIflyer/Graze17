@@ -330,7 +330,7 @@ public class SynchronizationService extends Service
 
       if (false)
       {
-        WifiLock wiFiLock = wifiManager.createWifiLock("graze16Sync");
+        WifiLock wiFiLock = wifiManager.createWifiLock("graze17Sync");
         wiFiLock.acquire();
       }
       PL.log(this, "doSync invoked. (1)", null, getApplicationContext());
@@ -507,6 +507,12 @@ public class SynchronizationService extends Service
                   .equals(EntryManager.DOWNLOAD_NO))
               {
                 Log.d(TAG, "Downloading of assets is disabled in the settings. Therefore skipping downloading webpages.");
+                return actual;
+              }
+
+              if (!manualSync && (syncJobStatus.noOfEntriesFetched <= 0))
+              {
+                Log.d(TAG, "Skipping automatic article download because no new entries were fetched during this sync.");
                 return actual;
               }
 
@@ -704,7 +710,7 @@ public class SynchronizationService extends Service
 
         PL.log("Run Mark - Mission accomplished. -> complete ", this);
 
-        result = new SynchronizeModelSucceeded(syncJobStatus.noOfEntriesUpdated);
+        result = new SynchronizeModelSucceeded(syncJobStatus.noOfEntriesUpdated, syncJobStatus.noOfEntriesFetched);
       }
       catch (Throwable throwable)
       {
@@ -1043,6 +1049,7 @@ class WebPageDownloadTask implements Callable<Void>
           Log.d(TAG, "Exception=" + e);
         }
         boolean downloadError = false;
+        boolean permanentMissingContent = false;
 
         if (e instanceof DownloadTimedOutException)
         {
@@ -1061,6 +1068,7 @@ class WebPageDownloadTask implements Callable<Void>
                   || (cause instanceof SocketException) || (cause instanceof UnknownHostException) || (cause instanceof DownloadCancelledException))))
           {
             Log.d(TAG, "Caught a FNFE");
+            permanentMissingContent = (e instanceof FileNotFoundException) || (cause instanceof FileNotFoundException);
 
           }
           else
@@ -1072,7 +1080,7 @@ class WebPageDownloadTask implements Callable<Void>
           U.renderStackTrace(e, renderedStackTrace);
           entry.setError(cause != null ? "Cause: " + cause.getClass().getSimpleName() + ": " + cause.getMessage() : e.getClass().getSimpleName()
               + ": " + e.getMessage() + "\nStacktrace: " + renderedStackTrace);
-          entry.setDownloaded(downloadError ? Entry.STATE_DOWNLOAD_ERROR : Entry.STATE_NOT_DOWNLOADED);
+          entry.setDownloaded((downloadError || permanentMissingContent) ? Entry.STATE_DOWNLOAD_ERROR : Entry.STATE_NOT_DOWNLOADED);
         }
       }
       finally

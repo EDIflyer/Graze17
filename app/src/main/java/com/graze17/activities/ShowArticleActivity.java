@@ -517,7 +517,10 @@ public class ShowArticleActivity extends Activity implements IEntryModelUpdateLi
 
     try
     {
-      topDeco.append("<p style=\"float: right; font-size: 0.6em;\">" + U.getDateFormat().format(date) + "</p>");
+      java.text.DateFormat dateFormatter = android.text.format.DateFormat.getDateFormat(this);
+      java.text.DateFormat timeFormatter = android.text.format.DateFormat.getTimeFormat(this);
+      String localizedDateTime = dateFormatter.format(date) + " " + timeFormatter.format(date);
+      topDeco.append("<p style=\"float: right; font-size: 0.6em;\">" + localizedDateTime + "</p>");
     }
     catch (Exception e)
     {

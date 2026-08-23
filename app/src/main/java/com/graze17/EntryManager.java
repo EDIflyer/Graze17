@@ -584,6 +584,13 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
           // this step. don't load an entry first
           // to delete it LATER
 
+          final long entryId = idsOfEntriesToDeleteCursor.getLong(0);
+          final Entry candidateEntry = findArticleById(entryId);
+          if (candidateEntry != null && candidateEntry.isStarred())
+          {
+            continue;
+          }
+
           String mostRecentArticleHash = getMostRecentArticleHash();
 
           String hash = idsOfEntriesToDeleteCursor.getString(1);
@@ -592,7 +599,7 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
           if ((mostRecentArticleHash == null) || !hash.endsWith(mostRecentArticleHash))
           {
             WebPageDownloadDirector.removeAssetsForId(hash, fileContextAdapter, ctx);
-            articleIdsToDeleteInDatabase.add(idsOfEntriesToDeleteCursor.getString(0));
+            articleIdsToDeleteInDatabase.add(String.valueOf(entryId));
             noOfEntriesDeleted++;
           }
 
@@ -1487,7 +1494,7 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
   public final int getThemeResourceId(String colorScheme)
   {
     String key = "Theme.NewsRob_" + colorScheme + "_Normal";
-    return ctx.getResources().getIdentifier(key, "style", "com.graze17");
+    return ctx.getResources().getIdentifier(key, "style", ctx.getPackageName());
   }
 
   public int getUnreadArticleCount()

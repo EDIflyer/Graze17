@@ -229,6 +229,8 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
     });
 
     setListAdapter(sca);
+    getListView().setClickable(true);
+    getListView().setOnItemClickListener((parent, view, position, id) -> onListItemClick(getListView(), view, position, id));
 
     if (!getEntryManager().isLicenseAccepted())
     {

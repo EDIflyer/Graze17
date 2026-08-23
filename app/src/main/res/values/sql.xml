@@ -608,74 +608,142 @@ FROM
 ORDER BY TIMESTAMP 
 </string>
 <string name="sql_get_ids_to_delete">
-SELECT\n
-  _id\n,
-  atom_id\n
-FROM\n
-  entries\n
-WHERE\n
-  read_state_pending = 0 \n 
-  AND starred_state_pending = 0 \n 
-  AND shared_state_pending = 0 \n
-  AND liked_state_pending = 0 \n
-  AND pinned_state_pending = 0\n
-  AND NOT (note_submitted_state = 0 AND note IS NOT null)\n  
-  -- MARK BEGIN \n
-  AND read_state = 1 \n 
-  -- MARK END \n 
-\n
- -- Starred Articles\n
-  AND (entries.atom_id NOT IN ( \n
-    SELECT \n
-      e2.atom_id  \n
-    FROM \n
-      entries e2 \n
-    WHERE \n
-      e2.starred_state = 1  \n
-    ORDER BY \n
-      e2.read_state ASC\n,
-      e2.UPDATED_UTC DESC  \n    
-    LIMIT ?1) \n
-\n
--- Shared Articles\n
-  AND entries.atom_id NOT IN (\n
-    SELECT \n
-      e2.atom_id  \n
-    FROM \n
-      entries e2 \n
-    WHERE \n
-      e2.shared_state = 1  \n
-    ORDER BY \n
-      e2.read_state ASC\n,
-      e2.UPDATED_UTC DESC  \n    
-    LIMIT ?2) \n
-\n    
--- Notes\n
-  AND entries.atom_id NOT IN (\n
-    SELECT \n
-      e2.atom_id  \n
-    FROM \n
-      entries e2 \n
-    WHERE \n
-      e2.type = \"N\"  \n
-    ORDER BY \n
-      e2.read_state ASC\n,
-      e2.UPDATED_UTC DESC  \n    
-    LIMIT ?3) \n
+SELECT
 
-  AND entries.atom_id NOT IN (\n
-    SELECT \n
-      e2.atom_id  \n
-    FROM \n
-      entries e2 \n
-    ORDER BY \n
-      e2.UPDATED_UTC DESC  \n    
-    LIMIT ?4) \n  
-  )\n
+  _id
+,
+  atom_id
 
-ORDER BY\n
-  READ_STATE DESC\n, -- prefer to delete read over unread over pinned \n
-  UPDATED_UTC ASC\n
+FROM
+
+  entries
+
+WHERE
+
+  read_state_pending = 0 
+ 
+  AND starred_state_pending = 0 
+ 
+  AND shared_state_pending = 0 
+
+  AND liked_state_pending = 0 
+
+  AND pinned_state_pending = 0
+
+
+  AND NOT (note_submitted_state = 0 AND note IS NOT null)
+  
+  -- MARK BEGIN 
+
+  AND read_state = 1 
+ 
+  -- MARK END 
+ 
+
+
+ -- Starred Articles
+
+  AND (entries.atom_id NOT IN ( 
+
+    SELECT 
+
+      e2.atom_id  
+
+    FROM 
+
+      entries e2 
+
+    WHERE 
+
+      e2.starred_state = 1  
+
+    ORDER BY 
+
+      e2.read_state ASC
+,
+      e2.UPDATED_UTC DESC  
+    
+    LIMIT ?1) 
+
+
+
+-- Shared Articles
+
+  AND entries.atom_id NOT IN (
+
+    SELECT 
+
+      e2.atom_id  
+
+    FROM 
+
+      entries e2 
+
+    WHERE 
+
+      e2.shared_state = 1  
+
+    ORDER BY 
+
+      e2.read_state ASC
+,
+      e2.UPDATED_UTC DESC  
+    
+    LIMIT ?2) 
+
+
+    
+-- Notes
+
+  AND entries.atom_id NOT IN (
+
+    SELECT 
+
+      e2.atom_id  
+
+    FROM 
+
+      entries e2 
+
+    WHERE 
+
+      e2.type = "N"  
+
+    ORDER BY 
+
+      e2.read_state ASC
+,
+      e2.UPDATED_UTC DESC  
+    
+    LIMIT ?3) 
+
+
+  AND entries.atom_id NOT IN (
+
+    SELECT 
+
+      e2.atom_id  
+
+    FROM 
+
+      entries e2 
+
+    ORDER BY 
+
+      e2.UPDATED_UTC DESC  
+    
+    LIMIT ?4) 
+  
+  )
+
+
+ORDER BY
+
+  READ_STATE DESC
+, -- prefer to delete read over unread over pinned 
+
+  UPDATED_UTC ASC
+
 </string>
 <string name="sql_remove_deleted_notes">
 DELETE 

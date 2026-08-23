@@ -205,7 +205,7 @@ public class FeedlyManager implements FeedlyKey
   {
     try {
       String ranked = newestFirst ? "newest" : "oldest";
-      Response<StreamContentResponse> response = api.getStreamContent(getAuthHeader(), "user/" + userId + "/category/graze16", maxItems, ranked, true, lastUpdate, continuation).execute();
+      Response<StreamContentResponse> response = api.getStreamContent(getAuthHeader(), "user/" + userId + "/category/graze17", maxItems, ranked, true, lastUpdate, continuation).execute();
       return response.body();
     } catch (Exception e) {
       return null;
