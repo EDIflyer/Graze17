@@ -1,4 +1,4 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -46,27 +46,27 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.graze16.AssetContentProvider;
-import com.graze16.DBQuery;
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.Feed;
-import com.graze16.IEntryModelUpdateListener;
-import com.graze16.NewsRob;
-import com.graze16.PL;
-import com.graze16.R;
-import com.graze16.ReadState;
-import com.graze16.jobs.ModelUpdateResult;
-import com.graze16.util.FlurryUtil;
-import com.graze16.util.GoogleAdsUtil;
-import com.graze16.util.MessageHelper;
-import com.graze16.util.SDK11Helper;
-import com.graze16.util.SDKVersionUtil;
-import com.graze16.util.Timing;
-import com.graze16.util.U;
-import com.graze16.util.WebViewHelper6;
-import com.graze16.util.WebViewHelper8;
-import com.graze16.widget.RelativeLayout;
+import com.graze17.AssetContentProvider;
+import com.graze17.DBQuery;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.Feed;
+import com.graze17.IEntryModelUpdateListener;
+import com.graze17.NewsRob;
+import com.graze17.PL;
+import com.graze17.R;
+import com.graze17.ReadState;
+import com.graze17.jobs.ModelUpdateResult;
+import com.graze17.util.FlurryUtil;
+import com.graze17.util.GoogleAdsUtil;
+import com.graze17.util.MessageHelper;
+import com.graze17.util.SDK11Helper;
+import com.graze17.util.SDKVersionUtil;
+import com.graze17.util.Timing;
+import com.graze17.util.U;
+import com.graze17.util.WebViewHelper6;
+import com.graze17.util.WebViewHelper8;
+import com.graze17.widget.RelativeLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -636,7 +636,7 @@ public class ShowArticleActivity extends Activity implements IEntryModelUpdateLi
     backgroundColorDark = Color.argb(255, 11, 11, 11);
 
     int position = i.getExtras().getInt(UIHelper.EXTRA_KEY_POSITION);
-    if ("com.graze16.VIEW".equals(i.getAction()))
+    if ("com.graze17.VIEW".equals(i.getAction()))
     {
       contentCursor = getEntryManager().getArticleAsCursor(i.getDataString());
     }
@@ -948,7 +948,7 @@ public class ShowArticleActivity extends Activity implements IEntryModelUpdateLi
       return;
     }
 
-    setContentView(com.graze16.R.layout.show_article);
+    setContentView(com.graze17.R.layout.show_article);
 
     googleAdsUtil = new GoogleAdsUtil(getEntryManager());
 

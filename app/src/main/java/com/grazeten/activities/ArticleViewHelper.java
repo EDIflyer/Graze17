@@ -1,4 +1,4 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,14 +16,14 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.NewsRob;
-import com.graze16.PL;
-import com.graze16.R;
-import com.graze16.ReadState;
-import com.graze16.util.U;
-import com.graze16.widget.SwipeRelativeLayout;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.NewsRob;
+import com.graze17.PL;
+import com.graze17.R;
+import com.graze17.ReadState;
+import com.graze17.util.U;
+import com.graze17.widget.SwipeRelativeLayout;
 
 class ArticleViewHelper
 {

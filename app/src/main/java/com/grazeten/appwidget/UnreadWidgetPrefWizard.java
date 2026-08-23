@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
 import android.app.Activity;
 import android.database.Cursor;
@@ -10,7 +10,7 @@ import android.widget.RadioGroup;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
-import com.graze16.R;
+import com.graze17.R;
 
 abstract class UnreadWidgetPrefWizard extends AbstractWizard
 {

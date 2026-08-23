@@ -1,4 +1,4 @@
-package com.graze16.auth;
+package com.graze17.auth;
 
 public interface IAuthenticationCallback
 {

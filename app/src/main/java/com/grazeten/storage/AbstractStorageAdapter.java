@@ -1,4 +1,4 @@
-package com.graze16.storage;
+package com.graze17.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 
 import android.content.Context;
 
-import com.graze16.PL;
+import com.graze17.PL;
 
 public abstract class AbstractStorageAdapter implements IStorageAdapter
 {

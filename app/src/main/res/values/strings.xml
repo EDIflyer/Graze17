@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">graze16</string>
+	<string name="app_name">Graze17</string>
 	<string name="app_description">A multi-platform offline\nnews client for Android</string>
     <string name="article_list">Article List</string>
     <string name="feed_list">Feed List</string>
@@ -17,7 +17,7 @@
   <string name="menu_item_search">Search</string>
 	
 	
-	<string name="dashboard_label">graze16</string>
+	<string name="dashboard_label">Graze17</string>
 	<string name="feed_list_label">Feeds</string>
 	<string name="article_list_label">Articles</string>
    
@@ -238,7 +238,7 @@ Otherwise you will be asked again for your credentials every two weeks.
 	<string name="dialog_n_articles_will_be_marked_as_read">%s unread articles will be marked as read.</string>
 	<string name="new_version_available_title">Update available</string>
 	<string name="new_version_available_summary">An update of graze16 is available!</string>
-	<string name="license">Graze16 License</string>
+	<string name="license">Graze17 License</string>
 	<string name="about_section_title">About</string>
 	<string name="about_license_title">License</string>
 	<string name="about_license_summary">View app license information</string>

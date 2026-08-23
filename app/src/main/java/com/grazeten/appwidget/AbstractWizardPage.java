@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
 abstract class AbstractWizardPage
 {

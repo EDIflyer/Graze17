@@ -1,4 +1,4 @@
-package com.graze16.locale;
+package com.graze17.locale;
 
 import android.app.Activity;
 import android.content.Intent;

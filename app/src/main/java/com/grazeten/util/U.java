@@ -1,4 +1,4 @@
-package com.graze16.util;
+package com.graze17.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,8 +26,8 @@ import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.view.Display;
 
-import com.graze16.PL;
-import com.graze16.download.HtmlEntitiesDecoder;
+import com.graze17.PL;
+import com.graze17.download.HtmlEntitiesDecoder;
 
 public class U
 {

@@ -1,4 +1,4 @@
-package com.graze16.search;
+package com.graze17.search;
 
 import android.app.SearchManager;
 import android.content.ContentProvider;
@@ -9,7 +9,7 @@ import android.database.MatrixCursor;
 import android.net.Uri;
 import android.text.TextUtils;
 
-import com.graze16.EntryManager;
+import com.graze17.EntryManager;
 
 public class SearchProvider extends ContentProvider
 {

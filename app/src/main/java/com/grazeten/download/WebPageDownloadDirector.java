@@ -1,4 +1,4 @@
-package com.graze16.download;
+package com.graze17.download;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -31,14 +31,14 @@ import java.util.regex.Pattern;
 import android.content.Context;
 import android.util.Log;
 
-import com.graze16.AssetContentProvider;
-import com.graze16.EntryManager;
-import com.graze16.NewsRob;
-import com.graze16.PL;
-import com.graze16.jobs.Job;
-import com.graze16.storage.IStorageAdapter;
-import com.graze16.util.Timing;
-import com.graze16.util.U;
+import com.graze17.AssetContentProvider;
+import com.graze17.EntryManager;
+import com.graze17.NewsRob;
+import com.graze17.PL;
+import com.graze17.jobs.Job;
+import com.graze17.storage.IStorageAdapter;
+import com.graze17.util.Timing;
+import com.graze17.util.U;
 
 public class WebPageDownloadDirector
 {

@@ -1,6 +1,6 @@
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
-import com.graze16.DBQuery;
+import com.graze17.DBQuery;
 
 public class WidgetPreferences
 {

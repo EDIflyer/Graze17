@@ -1,4 +1,4 @@
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
@@ -6,16 +6,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 
-import com.graze16.DBQuery;
-import com.graze16.DashboardListActivity;
-import com.graze16.EntryManager;
-import com.graze16.PL;
-import com.graze16.R;
-import com.graze16.activities.AbstractNewsRobListActivity;
-import com.graze16.activities.ArticleListActivity;
-import com.graze16.activities.FeedListActivity;
-import com.graze16.appwidget.UnreadWidgetPrefWizard.Scope;
-import com.graze16.appwidget.UnreadWidgetPrefWizard.StartingActivity;
+import com.graze17.DBQuery;
+import com.graze17.DashboardListActivity;
+import com.graze17.EntryManager;
+import com.graze17.PL;
+import com.graze17.R;
+import com.graze17.activities.AbstractNewsRobListActivity;
+import com.graze17.activities.ArticleListActivity;
+import com.graze17.activities.FeedListActivity;
+import com.graze17.appwidget.UnreadWidgetPrefWizard.Scope;
+import com.graze17.appwidget.UnreadWidgetPrefWizard.StartingActivity;
 
 public class UnreadWidgetPrefActivity extends Activity
 {

@@ -1,4 +1,4 @@
-package com.graze16.feedly;
+package com.graze17.feedly;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,26 +21,26 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.graze16.ArticleDbState;
-import com.graze16.AuthenticationFailedException;
-import com.graze16.BackendProvider;
-import com.graze16.DB;
-import com.graze16.DB.TempTable;
-import com.graze16.DiscoveredFeed;
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.Feed;
-import com.graze16.Label;
-import com.graze16.NeedsSessionException;
-import com.graze16.PL;
-import com.graze16.ReadState;
-import com.graze16.SyncJob;
-import com.graze16.download.HtmlEntitiesDecoder;
-import com.graze16.feedly.LatestRead.Feeds;
-import com.graze16.feedly.SearchFeedsResponse.Results;
-import com.graze16.feedly.StreamContentResponse.Item.Alternate;
-import com.graze16.feedly.UnreadCountResponse.UnreadCount;
-import com.graze16.jobs.Job;
+import com.graze17.ArticleDbState;
+import com.graze17.AuthenticationFailedException;
+import com.graze17.BackendProvider;
+import com.graze17.DB;
+import com.graze17.DB.TempTable;
+import com.graze17.DiscoveredFeed;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.Feed;
+import com.graze17.Label;
+import com.graze17.NeedsSessionException;
+import com.graze17.PL;
+import com.graze17.ReadState;
+import com.graze17.SyncJob;
+import com.graze17.download.HtmlEntitiesDecoder;
+import com.graze17.feedly.LatestRead.Feeds;
+import com.graze17.feedly.SearchFeedsResponse.Results;
+import com.graze17.feedly.StreamContentResponse.Item.Alternate;
+import com.graze17.feedly.UnreadCountResponse.UnreadCount;
+import com.graze17.jobs.Job;
 
 public class FeedlyBackendProvider implements BackendProvider
 {

@@ -1,10 +1,10 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.webkit.WebView;
 
-import com.graze16.R;
+import com.graze17.R;
 
 public class ShowGoogleErrorActivity extends Activity
 {

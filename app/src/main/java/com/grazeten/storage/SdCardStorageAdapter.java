@@ -1,4 +1,4 @@
-package com.graze16.storage;
+package com.graze17.storage;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,7 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.util.Log;
 
-import com.graze16.PL;
+import com.graze17.PL;
 
 public class SdCardStorageAdapter extends AbstractStorageAdapter
 {

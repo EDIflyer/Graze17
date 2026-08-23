@@ -1,4 +1,4 @@
-package com.graze16.util;
+package com.graze17.util;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;

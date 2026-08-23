@@ -1,11 +1,11 @@
-package com.graze16;
+package com.graze17;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
-import com.graze16.util.SDK9Helper;
+import com.graze17.util.SDK9Helper;
 
 public class DBQuery
 {

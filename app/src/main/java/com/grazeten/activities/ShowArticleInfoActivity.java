@@ -1,12 +1,12 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.R;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.R;
 
 public class ShowArticleInfoActivity extends Activity
 {

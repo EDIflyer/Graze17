@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,12 +10,12 @@ import android.net.Uri;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.graze16.activities.ArticleListActivity;
-import com.graze16.activities.UIHelper;
-import com.graze16.jobs.Job;
-import com.graze16.jobs.ModelUpdateResult;
-import com.graze16.locale.FireReceiver;
-import com.graze16.util.U;
+import com.graze17.activities.ArticleListActivity;
+import com.graze17.activities.UIHelper;
+import com.graze17.jobs.Job;
+import com.graze17.jobs.ModelUpdateResult;
+import com.graze17.locale.FireReceiver;
+import com.graze17.util.U;
 
 import java.util.Date;
 

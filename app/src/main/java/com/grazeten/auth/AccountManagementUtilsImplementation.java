@@ -1,4 +1,4 @@
-package com.graze16.auth;
+package com.graze17.auth;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.graze16.NewsRob;
-import com.graze16.PL;
+import com.graze17.NewsRob;
+import com.graze17.PL;
 
 public class AccountManagementUtilsImplementation implements IAccountManagementUtils
 {

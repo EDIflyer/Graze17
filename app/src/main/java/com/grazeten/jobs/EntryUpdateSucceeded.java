@@ -1,6 +1,6 @@
-package com.graze16.jobs;
+package com.graze17.jobs;
 
-import com.graze16.Entry;
+import com.graze17.Entry;
 
 public class EntryUpdateSucceeded extends ModelUpdateResult
 {

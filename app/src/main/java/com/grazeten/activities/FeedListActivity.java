@@ -1,4 +1,4 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.graze16.DBQuery;
-import com.graze16.Entry;
-import com.graze16.Feed;
-import com.graze16.R;
-import com.graze16.ReadState;
+import com.graze17.DBQuery;
+import com.graze17.Entry;
+import com.graze17.Feed;
+import com.graze17.R;
+import com.graze17.ReadState;
 
 public class FeedListActivity extends AbstractNewsRobListActivity
 {

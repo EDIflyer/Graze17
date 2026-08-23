@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.graze16;
+package com.graze17;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -29,10 +29,10 @@ import javax.xml.parsers.SAXParserFactory;
 
 import java.util.Map;
 import okhttp3.FormBody;
-import com.graze16.download.NewsRobHttpRequest;
-import com.graze16.download.NewsRobHttpResponse;
-import com.graze16.download.StatusLine;
-import com.graze16.download.HttpEntity;
+import com.graze17.download.NewsRobHttpRequest;
+import com.graze17.download.NewsRobHttpResponse;
+import com.graze17.download.StatusLine;
+import com.graze17.download.HttpEntity;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -42,15 +42,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.graze16.DB.TempTable;
-import com.graze16.activities.LoginActivity;
-import com.graze16.auth.AccountManagementUtils;
-import com.graze16.auth.IAccountManagementUtils;
-import com.graze16.download.NewsRobHttpClient;
-import com.graze16.jobs.Job;
-import com.graze16.util.SimpleStringExtractorHandler;
-import com.graze16.util.Timing;
-import com.graze16.util.U;
+import com.graze17.DB.TempTable;
+import com.graze17.activities.LoginActivity;
+import com.graze17.auth.AccountManagementUtils;
+import com.graze17.auth.IAccountManagementUtils;
+import com.graze17.download.NewsRobHttpClient;
+import com.graze17.jobs.Job;
+import com.graze17.util.SimpleStringExtractorHandler;
+import com.graze17.util.Timing;
+import com.graze17.util.U;
 
 public class EntriesRetriever implements BackendProvider
 {
@@ -711,8 +711,8 @@ public class EntriesRetriever implements BackendProvider
   /*
    * (non-Javadoc)
    * 
-   * @see com.graze16.SyncInterface#differentialUpdateOfArticlesStates(com.graze16 .EntryManager, com.graze16.jobs.Job, java.lang.String, java.lang.String,
-   * com.graze16.ArticleDbState)
+   * @see com.graze17.SyncInterface#differentialUpdateOfArticlesStates(com.graze17 .EntryManager, com.graze17.jobs.Job, java.lang.String, java.lang.String,
+   * com.graze17.ArticleDbState)
    */
   @Override
   public void differentialUpdateOfArticlesStates(final EntryManager entryManager, Job job, String stream, String excludeState,
@@ -777,7 +777,7 @@ public class EntriesRetriever implements BackendProvider
   /*
    * (non-Javadoc)
    * 
-   * @see com.graze16.SyncInterface#discoverFeeds(java.lang.String)
+   * @see com.graze17.SyncInterface#discoverFeeds(java.lang.String)
    */
   @Override
   public List<DiscoveredFeed> discoverFeeds(final String query) throws SyncAPIException, IOException, AuthenticationExpiredException,
@@ -1770,7 +1770,7 @@ public class EntriesRetriever implements BackendProvider
   /*
    * (non-Javadoc)
    * 
-   * @see com.graze16.SyncInterface#submitSubscribe(java.lang.String)
+   * @see com.graze17.SyncInterface#submitSubscribe(java.lang.String)
    */
   @Override
   public boolean submitSubscribe(String url2subscribe) throws SyncAPIException
@@ -1912,7 +1912,7 @@ public class EntriesRetriever implements BackendProvider
   /*
    * (non-Javadoc)
    * 
-   * @see com.graze16.SyncInterface#unsubscribeFeed(java.lang.String)
+   * @see com.graze17.SyncInterface#unsubscribeFeed(java.lang.String)
    */
   @Override
   public void unsubscribeFeed(String feedAtomId) throws IOException, NeedsSessionException, SyncAPIException

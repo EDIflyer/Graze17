@@ -1,6 +1,6 @@
-package com.graze16;
+package com.graze17;
 
-import com.graze16.jobs.ModelUpdateResult;
+import com.graze17.jobs.ModelUpdateResult;
 
 public interface IEntryModelUpdateListener
 {

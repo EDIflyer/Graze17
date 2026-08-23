@@ -1,4 +1,4 @@
-package com.graze16.auth;
+package com.graze17.auth;
 
 import android.content.Context;
 import android.os.Build;
@@ -29,7 +29,7 @@ public class AccountManagementUtils
         if (sdk7Plus)
         {
           Class.forName("android.accounts.Account"); // API there?
-          Class c = Class.forName("com.graze16.auth.AccountManagementUtilsImplementation");
+          Class c = Class.forName("com.graze17.auth.AccountManagementUtilsImplementation");
 
           if (c != null)
           {

@@ -1,4 +1,4 @@
-package com.graze16.widget;
+package com.graze17.widget;
 
 import android.content.Context;
 import android.os.Handler;
@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
-import com.graze16.EntryManager;
+import com.graze17.EntryManager;
 
 public class RelativeLayout extends android.widget.RelativeLayout
 {

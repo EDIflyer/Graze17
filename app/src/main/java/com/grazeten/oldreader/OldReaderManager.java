@@ -1,11 +1,11 @@
-package com.graze16.oldreader;
+package com.graze17.oldreader;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.Response;
 
-import com.graze16.AuthenticationFailedException;
-import com.graze16.oldreader.ItemsResponse.Item;
+import com.graze17.AuthenticationFailedException;
+import com.graze17.oldreader.ItemsResponse.Item;
 
 public class OldReaderManager
 {

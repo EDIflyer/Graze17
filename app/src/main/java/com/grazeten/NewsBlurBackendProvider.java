@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -22,11 +22,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 
-import com.graze16.DB.TempTable;
-import com.graze16.activities.LoginActivity;
-import com.graze16.download.HtmlEntitiesDecoder;
-import com.graze16.jobs.Job;
-import com.graze16.util.Timing;
+import com.graze17.DB.TempTable;
+import com.graze17.activities.LoginActivity;
+import com.graze17.download.HtmlEntitiesDecoder;
+import com.graze17.jobs.Job;
+import com.graze17.util.Timing;
 import com.newsblur.domain.FeedResult;
 import com.newsblur.domain.Story;
 import com.newsblur.domain.ValueMultimap;

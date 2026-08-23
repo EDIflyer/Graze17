@@ -1,4 +1,4 @@
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
 import android.app.PendingIntent;
 import android.app.Service;
@@ -11,13 +11,13 @@ import android.os.IBinder;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.graze16.DBQuery;
-import com.graze16.EntryManager;
-import com.graze16.PL;
-import com.graze16.R;
-import com.graze16.activities.ArticleListActivity;
-import com.graze16.activities.UIHelper;
-import com.graze16.util.Timing;
+import com.graze17.DBQuery;
+import com.graze17.EntryManager;
+import com.graze17.PL;
+import com.graze17.R;
+import com.graze17.activities.ArticleListActivity;
+import com.graze17.activities.UIHelper;
+import com.graze17.util.Timing;
 
 public class UnreadWidgetProvider extends AppWidgetProvider
 {
@@ -26,7 +26,7 @@ public class UnreadWidgetProvider extends AppWidgetProvider
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
   {
-    context.startService(new Intent(context, UpdateService.class));
+    requestWidgetsUpdate(context);
   }
 
   @Override

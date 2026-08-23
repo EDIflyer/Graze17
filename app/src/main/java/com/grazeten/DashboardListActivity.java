@@ -1,14 +1,17 @@
-package com.graze16;
+package com.graze17;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -19,19 +22,23 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
-import com.graze16.activities.AbstractNewsRobListActivity;
-import com.graze16.activities.ArticleListActivity;
-import com.graze16.activities.FeedListActivity;
-import com.graze16.activities.SettingsActivity;
-import com.graze16.activities.UIHelper;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import com.graze17.activities.AbstractNewsRobListActivity;
+import com.graze17.activities.ArticleListActivity;
+import com.graze17.activities.FeedListActivity;
+import com.graze17.activities.SettingsActivity;
+import com.graze17.activities.UIHelper;
 
 public class DashboardListActivity extends AbstractNewsRobListActivity
 {
 
+  private static final int REQUEST_POST_NOTIFICATIONS = 17001;
+
   static final String      TAG                               = DashboardListActivity.class.getSimpleName();
 
-  private static final int DIALOG_MARK_ALL_AS_READ     = 200;
-  private static final int DIALOG_SHOW_LICENSE               = 201;
+  private static final int DIALOG_SHOW_LICENSE               = 200;
   private static final int DIALOG_SHOW_REINSTALL_NEWSROB     = 202;
 
   public static Dialog createShowReinstallDialog(final EntryManager entryManager, final Activity enclosingActivity)
@@ -173,19 +180,6 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
 
     Cursor c = getEntryManager().getDashboardContentCursor(dbQuery);
     startManagingCursor(c);
-    
-    android.util.Log.d(TAG, "Dashboard cursor count: " + (c != null ? c.getCount() : "null"));
-    if (c != null && c.getCount() > 0) {
-      android.util.Log.d(TAG, "Cursor has " + c.getCount() + " items");
-      
-      // Force hide empty view when we have dashboard items
-      View emptyView = findViewById(android.R.id.empty);
-      if (emptyView != null) {
-        android.util.Log.d(TAG, "Dashboard: Hiding empty view - we have " + c.getCount() + " items");
-        emptyView.setVisibility(View.GONE);
-      }
-      getListView().setVisibility(View.VISIBLE);
-    }
 
     final int readIndicator = getEntryManager().isLightColorSchemeSelected() ? R.drawable.read_indicator : R.drawable.read_indicator_dark;
     sca = new SimpleCursorAdapter(this, R.layout.dashboard_list_row, c, new String[] { "_id", "frequency", "sum_unread_freq" }, new int[] {
@@ -235,26 +229,6 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
     });
 
     setListAdapter(sca);
-
-    // Ensure ListView is clickable
-    getListView().setClickable(true);
-    getListView().setOnItemClickListener((parent, view, position, id) -> {
-      android.util.Log.d(TAG, "ListView onItemClick triggered: position=" + position + ", id=" + id);
-      onListItemClick(getListView(), view, position, id);
-    });
-    
-    // Force hide empty view if we have data
-    if (c != null && c.getCount() > 0) {
-      android.util.Log.d(TAG, "Hiding empty view - we have " + c.getCount() + " items");
-      View emptyView = findViewById(android.R.id.empty);
-      if (emptyView != null) {
-        emptyView.setVisibility(View.GONE);
-      }
-      // Ensure ListView is visible
-      getListView().setVisibility(View.VISIBLE);
-    } else {
-      android.util.Log.d(TAG, "No data in cursor, keeping empty view visible");
-    }
 
     if (!getEntryManager().isLicenseAccepted())
     {
@@ -325,28 +299,39 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
-    try {
-      android.util.Log.d(TAG, "DashboardListActivity.onCreate() - starting");
-      super.onCreate(savedInstanceState);
-      android.util.Log.d(TAG, "DashboardListActivity.onCreate() - super.onCreate completed");
-      
-      setContentView(R.layout.dashboard_list);
-      android.util.Log.d(TAG, "DashboardListActivity.onCreate() - setContentView completed");
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.dashboard_list);
 
-      initialize(getIntent());
-      android.util.Log.d(TAG, "DashboardListActivity.onCreate() - initialize completed");
+    initialize(getIntent());
+    requestNotificationPermissionIfNeeded();
+  }
 
-    } catch (Exception e) {
-      android.util.Log.e(TAG, "Fatal error in DashboardListActivity.onCreate()", e);
-      throw e;
+  private void requestNotificationPermissionIfNeeded()
+  {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
+    {
+      return;
     }
+
+    if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED)
+    {
+      return;
+    }
+
+    ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.POST_NOTIFICATIONS }, REQUEST_POST_NOTIFICATIONS);
   }
 
   @Override
-  protected void onResume() {
-    super.onResume();
-    // Refresh the list when returning to this activity (e.g., after sync)
-    initialize(getIntent());
+  public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+  {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    if (requestCode != REQUEST_POST_NOTIFICATIONS)
+    {
+      return;
+    }
+
+    boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+    android.util.Log.d(TAG, "POST_NOTIFICATIONS permission granted=" + granted);
   }
 
   @Override
@@ -419,18 +404,23 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
    */
   protected void onListItemClick(ListView l, View v, int position, long id)
   {
-    android.util.Log.d(TAG, "onListItemClick: position=" + position + ", id=" + id);
-
     final boolean goToArticleList = id == -99l;
 
-    Cursor c = (Cursor) getListView().getAdapter().getItem(position);
+    if (sca == null || position < 0 || position >= sca.getCount())
+    {
+      return;
+    }
+
+    Cursor c = (Cursor) sca.getItem(position);
+    if (c == null)
+    {
+      return;
+    }
 
     String labelName = c.getString(0);
     int frequency = c.getInt(1);
 
     int ord = c.getInt(3);
-    
-    android.util.Log.d(TAG, "Clicked item: labelName=" + labelName + ", frequency=" + frequency + ", ord=" + ord);
 
     boolean showOnlyNotes = (ord == -7) && "notes".equals(labelName);
     Long feedId = null;
@@ -473,6 +463,7 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
   protected void onNewIntent(Intent intent)
   {
     super.onNewIntent(intent);
+    setIntent(intent);
     initialize(intent);
   }
 

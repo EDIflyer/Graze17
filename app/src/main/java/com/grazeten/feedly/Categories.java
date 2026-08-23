@@ -1,4 +1,4 @@
-package com.graze16.feedly;
+package com.graze17.feedly;
 
 public class Categories
 {

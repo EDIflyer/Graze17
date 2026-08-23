@@ -1,4 +1,4 @@
-package com.graze16.download;
+package com.graze17.download;
 
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -10,8 +10,8 @@ import java.util.zip.GZIPInputStream;
 import android.content.Context;
 import android.util.Log;
 
-import com.graze16.NewsRob;
-import com.graze16.PL;
+import com.graze17.NewsRob;
+import com.graze17.PL;
 
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;

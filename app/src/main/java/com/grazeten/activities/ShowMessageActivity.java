@@ -1,4 +1,4 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.graze16.DashboardListActivity;
-import com.graze16.R;
+import com.graze17.DashboardListActivity;
+import com.graze17.R;
 
 public class ShowMessageActivity extends Activity
 {

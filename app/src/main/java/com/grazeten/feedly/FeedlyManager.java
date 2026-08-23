@@ -1,4 +1,4 @@
-package com.graze16.feedly;
+package com.graze17.feedly;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,8 +12,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 
-import com.graze16.BackendProvider.AuthToken;
-import com.graze16.EntryManager;
+import com.graze17.BackendProvider.AuthToken;
+import com.graze17.EntryManager;
 
 public class FeedlyManager implements FeedlyKey
 {

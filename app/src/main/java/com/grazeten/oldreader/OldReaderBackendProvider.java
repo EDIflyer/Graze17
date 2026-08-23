@@ -1,4 +1,4 @@
-package com.graze16.oldreader;
+package com.graze17.oldreader;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -26,28 +26,28 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 
-import com.graze16.ArticleDbState;
-import com.graze16.AuthenticationFailedException;
-import com.graze16.BackendProvider;
-import com.graze16.DB;
-import com.graze16.DiscoveredFeed;
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.Feed;
-import com.graze16.Label;
-import com.graze16.NeedsSessionException;
-import com.graze16.NewsRob;
-import com.graze16.PL;
-import com.graze16.ReadState;
-import com.graze16.SyncJob;
-import com.graze16.activities.LoginActivity;
-import com.graze16.download.HtmlEntitiesDecoder;
-import com.graze16.jobs.Job;
-import com.graze16.oldreader.ItemContentResponse.Item;
-import com.graze16.oldreader.ItemContentResponse.Item.Link;
-import com.graze16.oldreader.SubscriptionResponse.Subscriptions;
-import com.graze16.oldreader.UpdateArticlesRequest.MarkType;
-import com.graze16.util.Timing;
+import com.graze17.ArticleDbState;
+import com.graze17.AuthenticationFailedException;
+import com.graze17.BackendProvider;
+import com.graze17.DB;
+import com.graze17.DiscoveredFeed;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.Feed;
+import com.graze17.Label;
+import com.graze17.NeedsSessionException;
+import com.graze17.NewsRob;
+import com.graze17.PL;
+import com.graze17.ReadState;
+import com.graze17.SyncJob;
+import com.graze17.activities.LoginActivity;
+import com.graze17.download.HtmlEntitiesDecoder;
+import com.graze17.jobs.Job;
+import com.graze17.oldreader.ItemContentResponse.Item;
+import com.graze17.oldreader.ItemContentResponse.Item.Link;
+import com.graze17.oldreader.SubscriptionResponse.Subscriptions;
+import com.graze17.oldreader.UpdateArticlesRequest.MarkType;
+import com.graze17.util.Timing;
 
 public class OldReaderBackendProvider implements BackendProvider
 {

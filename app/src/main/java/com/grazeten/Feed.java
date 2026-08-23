@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -22,8 +22,8 @@ import org.xml.sax.helpers.DefaultHandler;
 import android.content.Context;
 import android.util.Log;
 
-import com.graze16.storage.SdCardStorageAdapter;
-import com.graze16.util.SimpleStringExtractorHandler;
+import com.graze17.storage.SdCardStorageAdapter;
+import com.graze17.util.SimpleStringExtractorHandler;
 
 public class Feed
 {

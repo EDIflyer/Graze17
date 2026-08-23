@@ -1,9 +1,9 @@
-package com.graze16;
+package com.graze17;
 
 import android.content.Context;
 
-import com.graze16.EntryManager.SyncJobStatus;
-import com.graze16.jobs.Job;
+import com.graze17.EntryManager.SyncJobStatus;
+import com.graze17.jobs.Job;
 
 public abstract class SyncJob extends Job
 {

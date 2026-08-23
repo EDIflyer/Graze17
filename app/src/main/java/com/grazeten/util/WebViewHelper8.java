@@ -1,11 +1,11 @@
-package com.graze16.util;
+package com.graze17.util;
 
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 
-import com.graze16.EntryManager;
-import com.graze16.PL;
+import com.graze17.EntryManager;
+import com.graze17.PL;
 
 public class WebViewHelper8
 {

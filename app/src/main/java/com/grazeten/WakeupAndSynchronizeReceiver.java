@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -26,7 +26,21 @@ public class WakeupAndSynchronizeReceiver extends BroadcastReceiver
       else
         scheduler.updateNextSyncTime(-1);
       SynchronizationService.acquireWakeLock(c);
-      c.startService(i);
+      try
+      {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        {
+          c.startForegroundService(i);
+        }
+        else
+        {
+          c.startService(i);
+        }
+      }
+      catch (IllegalStateException e)
+      {
+        PL.log("Unable to start SynchronizationService from receiver.", e, c);
+      }
     }
   }
 

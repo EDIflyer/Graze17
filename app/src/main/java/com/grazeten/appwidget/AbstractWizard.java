@@ -1,4 +1,4 @@
-package com.graze16.appwidget;
+package com.graze17.appwidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ViewFlipper;
 
-import com.graze16.EntryManager;
-import com.graze16.R;
+import com.graze17.EntryManager;
+import com.graze17.R;
 
 /**
  * The Wizard is responsible for the UI It should be possible to use it outside of the context of a wizard.

@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import android.app.Activity;
 import android.app.Application;
@@ -8,10 +8,10 @@ import android.net.Uri;
 import android.os.Debug;
 import android.util.Log;
 
-import com.graze16.activities.ShowMessageActivity;
-import com.graze16.util.NewsRobStrictMode;
-import com.graze16.util.SDKVersionUtil;
-import com.graze16.util.U;
+import com.graze17.activities.ShowMessageActivity;
+import com.graze17.util.NewsRobStrictMode;
+import com.graze17.util.SDKVersionUtil;
+import com.graze17.util.U;
 
 import java.io.File;
 import java.io.FileInputStream;

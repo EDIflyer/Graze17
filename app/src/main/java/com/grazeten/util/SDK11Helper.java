@@ -1,4 +1,4 @@
-package com.graze16.util;
+package com.graze17.util;
 
 import java.lang.reflect.Field;
 
@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.graze16.PL;
+import com.graze17.PL;
 
 public class SDK11Helper
 {

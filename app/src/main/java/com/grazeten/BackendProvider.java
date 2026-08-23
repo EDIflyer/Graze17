@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -13,7 +13,7 @@ import org.xml.sax.SAXException;
 import android.app.Activity;
 import android.content.Context;
 
-import com.graze16.jobs.Job;
+import com.graze17.jobs.Job;
 
 public interface BackendProvider
 {

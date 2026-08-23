@@ -1,4 +1,4 @@
-package com.graze16.activities;
+package com.graze17.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,12 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
-import com.graze16.DBQuery;
-import com.graze16.Entry;
-import com.graze16.EntryManager;
-import com.graze16.Feed;
-import com.graze16.NewsRob;
-import com.graze16.PL;
+import com.graze17.DBQuery;
+import com.graze17.Entry;
+import com.graze17.EntryManager;
+import com.graze17.Feed;
+import com.graze17.NewsRob;
+import com.graze17.PL;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
@@ -151,7 +151,7 @@ public class UIHelper
         break;
     }
 
-    int backgroundResource = resources.getIdentifier(resourceName, "drawable", "com.graze16");
+    int backgroundResource = resources.getIdentifier(resourceName, "drawable", "com.graze17");
     resourceIdCache[cacheKey] = backgroundResource;
     return backgroundResource;
   }

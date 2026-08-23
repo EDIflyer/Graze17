@@ -1,4 +1,4 @@
-package com.graze16;
+package com.graze17;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +28,7 @@ import java.io.IOException;
 import org.xml.sax.SAXException;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
@@ -35,31 +36,32 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
 
-import com.graze16.BackendProvider.AuthenticationExpiredException;
-import com.graze16.BackendProvider.ServerBadRequestException;
-import com.graze16.BackendProvider.SyncAPIException;
-import com.graze16.EntryManager.SyncJobStatus;
-import com.graze16.activities.UIHelper;
-import com.graze16.download.DownloadCancelledException;
-import com.graze16.download.DownloadContext;
-import com.graze16.download.DownloadException;
-import com.graze16.download.DownloadTimedOutException;
-import com.graze16.download.WebPageDownloadDirector;
-import com.graze16.jobs.Job;
-import com.graze16.jobs.ModelUpdateResult;
-import com.graze16.jobs.SynchronizeModelFailed;
-import com.graze16.jobs.SynchronizeModelSucceeded;
-import com.graze16.storage.IStorageAdapter;
-import com.graze16.util.PreviewGenerator;
-import com.graze16.util.SDK9Helper;
-import com.graze16.util.Timing;
-import com.graze16.util.U;
+import com.graze17.BackendProvider.AuthenticationExpiredException;
+import com.graze17.BackendProvider.ServerBadRequestException;
+import com.graze17.BackendProvider.SyncAPIException;
+import com.graze17.EntryManager.SyncJobStatus;
+import com.graze17.activities.UIHelper;
+import com.graze17.download.DownloadCancelledException;
+import com.graze17.download.DownloadContext;
+import com.graze17.download.DownloadException;
+import com.graze17.download.DownloadTimedOutException;
+import com.graze17.download.WebPageDownloadDirector;
+import com.graze17.jobs.Job;
+import com.graze17.jobs.ModelUpdateResult;
+import com.graze17.jobs.SynchronizeModelFailed;
+import com.graze17.jobs.SynchronizeModelSucceeded;
+import com.graze17.storage.IStorageAdapter;
+import com.graze17.util.PreviewGenerator;
+import com.graze17.util.SDK9Helper;
+import com.graze17.util.Timing;
+import com.graze17.util.U;
 
 class DeleteArticlesJob extends SyncJob
 {
@@ -166,7 +168,9 @@ public class SynchronizationService extends Service
 
   public static final String   EXTRA_MANUAL_SYNC         = "manual_sync";
 
-  private static final String  PREF_KEY_LAST_STARTED     = "com.graze16.synchronization.lastStarted";
+  private static final String  PREF_KEY_LAST_STARTED     = "com.graze17.synchronization.lastStarted";
+  private static final int     FOREGROUND_NOTIFICATION_ID = 99017;
+  private static final String  SYNC_CHANNEL_ID            = "graze17.sync";
 
   private static WakeLock      wl;
   private Handler              handler;
@@ -228,6 +232,87 @@ public class SynchronizationService extends Service
   private EntryManager        entryManager;
 
   private boolean             shouldDownloadArticlesInParallel;
+  private boolean             foregroundStarted;
+
+  private void ensureNotificationChannel()
+  {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+    {
+      return;
+    }
+
+    NotificationChannel channel = new NotificationChannel(
+        SYNC_CHANNEL_ID,
+        "Synchronization",
+        NotificationManager.IMPORTANCE_LOW);
+    channel.setDescription("Background synchronization status");
+    mNM.createNotificationChannel(channel);
+  }
+
+  private Notification createForegroundNotification(boolean uploadOnly)
+  {
+    String title = uploadOnly ? U.t(this, R.string.fast_synchronization_running_notification_title)
+        : U.t(this, R.string.synchronization_running_notification_title);
+    String summary = uploadOnly ? U.t(this, R.string.fast_synchronization_running_notification_summary)
+        : U.t(this, R.string.synchronization_running_notification_summary);
+
+    Intent openDashboardIntent = new Intent(this, DashboardListActivity.class);
+    int pendingIntentFlags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        ? android.app.PendingIntent.FLAG_IMMUTABLE
+        : 0;
+
+    android.app.PendingIntent pendingIntent = android.app.PendingIntent.getActivity(this, 0, openDashboardIntent, pendingIntentFlags);
+
+    Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+        ? new Notification.Builder(this, SYNC_CHANNEL_ID)
+        : new Notification.Builder(this);
+
+    return builder
+        .setSmallIcon(R.drawable.gen_auto_notification_icon)
+        .setContentTitle(title)
+        .setContentText(summary)
+        .setContentIntent(pendingIntent)
+        .setOngoing(true)
+        .setWhen(System.currentTimeMillis())
+        .build();
+  }
+
+  private void startSyncForeground(boolean uploadOnly)
+  {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
+    {
+      return;
+    }
+
+    try
+    {
+      ensureNotificationChannel();
+      startForeground(FOREGROUND_NOTIFICATION_ID, createForegroundNotification(uploadOnly));
+      foregroundStarted = true;
+    }
+    catch (Throwable t)
+    {
+      Log.e(TAG, "Failed to enter foreground mode for sync service.", t);
+    }
+  }
+
+  private void stopSyncForeground()
+  {
+    if (!foregroundStarted)
+    {
+      return;
+    }
+
+    try
+    {
+      stopForeground(true);
+    }
+    catch (Throwable t)
+    {
+      Log.e(TAG, "Failed to stop foreground mode for sync service.", t);
+    }
+    foregroundStarted = false;
+  }
 
   protected synchronized void doSync(final boolean uploadOnly, final boolean manualSync)
   {
@@ -782,6 +867,7 @@ public class SynchronizationService extends Service
     }
     final boolean uploadOnly = uO;
     final boolean manualSync = mS;
+    startSyncForeground(uploadOnly);
     new Thread(new Runnable()
     {
 
@@ -802,6 +888,7 @@ public class SynchronizationService extends Service
           {
             public void run()
             {
+              stopSyncForeground();
               stopSelf();
             }
           });
@@ -810,6 +897,13 @@ public class SynchronizationService extends Service
 
     }).start();
 
+  }
+
+  @Override
+  public int onStartCommand(Intent intent, int flags, int startId)
+  {
+    onStart(intent, startId);
+    return START_NOT_STICKY;
   }
 
   @Override

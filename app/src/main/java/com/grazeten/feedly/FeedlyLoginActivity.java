@@ -1,8 +1,8 @@
-package com.graze16.feedly;
+package com.graze17.feedly;
 
-import static com.graze16.feedly.FeedlyApi.AUTH_URL;
-import static com.graze16.feedly.FeedlyApi.CLIENT_ID;
-import static com.graze16.feedly.FeedlyApi.REDIRECT_URI;
+import static com.graze17.feedly.FeedlyApi.AUTH_URL;
+import static com.graze17.feedly.FeedlyApi.CLIENT_ID;
+import static com.graze17.feedly.FeedlyApi.REDIRECT_URI;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -15,8 +15,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.graze16.EntryManager;
-import com.graze16.R;
+import com.graze17.EntryManager;
+import com.graze17.R;
 
 public class FeedlyLoginActivity extends Activity
 {
