@@ -147,7 +147,7 @@
         <activity
             android:name="com.graze17.activities.SettingsActivity"
             android:label="@string/settings_title"
-            android:theme="@android:style/Theme.Black" />
+            android:theme="@style/Theme.Settings" />
         <activity
             android:name="com.graze17.activities.ShowGoogleErrorActivity"
             android:configChanges="orientation|keyboardHidden|keyboard"

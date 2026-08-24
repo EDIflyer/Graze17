@@ -18,7 +18,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.SAXException;
 
 import android.app.Activity;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 
@@ -29,8 +28,6 @@ import com.graze17.jobs.Job;
 import com.graze17.util.Timing;
 import com.newsblur.domain.FeedResult;
 import com.newsblur.domain.Story;
-import com.newsblur.domain.ValueMultimap;
-import com.newsblur.network.APIConstants;
 import com.newsblur.network.APIManager;
 import com.newsblur.network.ServerErrorException;
 import com.newsblur.network.domain.FeedFolderResponse;
@@ -483,17 +480,14 @@ public class NewsBlurBackendProvider implements BackendProvider
     {
       if (desiredState.equals("1"))
       {
-        ValueMultimap list = new ValueMultimap();
+        List<String> hashes = new ArrayList<String>(entries.size());
 
         for (Entry e : entries)
         {
-          list.put(e.getFeedAtomId(), e.getAtomId());
+          hashes.add(e.getHash());
         }
 
-        ContentValues values = new ContentValues();
-        values.put(APIConstants.PARAMETER_FEEDS_STORIES, list.getJsonString());
-
-        if (apiManager.markMultipleStoriesAsRead(values))
+        if (apiManager.markStoryHashesAsRead(hashes))
         {
           List<String> atomIds = new ArrayList<String>(entries.size());
 
@@ -519,7 +513,7 @@ public class NewsBlurBackendProvider implements BackendProvider
         List<String> ids = new ArrayList<String>(1);
         for (Entry entry : entries)
         {
-          if (apiManager.markStoryAsUnRead(entry.getFeedAtomId(), entry.getAtomId()))
+          if (apiManager.markStoryHashAsUnread(entry.getHash()))
           {
             ids.clear();
             ids.add(entry.getAtomId());
@@ -552,7 +546,7 @@ public class NewsBlurBackendProvider implements BackendProvider
     {
       if (desiredState.equals("1"))
       {
-        if (apiManager.markStoryAsStarred(entry.getFeedAtomId(), entry.getAtomId()))
+        if (apiManager.markStoryHashAsStarred(entry.getHash()))
         {
           ids.clear();
           ids.add(entry.getAtomId());
@@ -563,7 +557,7 @@ public class NewsBlurBackendProvider implements BackendProvider
 
       if (desiredState.equals("0"))
       {
-        if (apiManager.markStoryAsUnStarred(entry.getFeedAtomId(), entry.getAtomId()))
+        if (apiManager.markStoryHashAsUnstarred(entry.getHash()))
         {
           ids.clear();
           ids.add(entry.getAtomId());

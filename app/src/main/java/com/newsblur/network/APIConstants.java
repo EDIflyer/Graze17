@@ -33,6 +33,12 @@ public class APIConstants
   public static final String URL_MARK_STORY_AS_UNSTARRED   = "https://newsblur.com/reader/mark_story_as_unstarred/";
   public static final String URL_STARRED_STORIES           = "https://newsblur.com/reader/starred_stories";
 
+  // story_hash based endpoints (mark_story_as_unread/starred/unstarred were retired by NewsBlur)
+  public static final String URL_MARK_STORY_HASH_AS_UNREAD    = "https://newsblur.com/reader/mark_story_hash_as_unread/";
+  public static final String URL_MARK_STORY_HASH_AS_STARRED   = "https://newsblur.com/reader/mark_story_hash_as_starred/";
+  public static final String URL_MARK_STORY_HASH_AS_UNSTARRED = "https://newsblur.com/reader/mark_story_hash_as_unstarred/";
+  public static final String URL_MARK_STORY_HASHES_AS_READ    = "https://newsblur.com/reader/mark_story_hashes_as_read/";
+
   public static final String URL_FEED_AUTOCOMPLETE         = "https://newsblur.com/rss_feeds/feed_autocomplete";
 
   public static final String URL_LIKE_COMMENT              = "https://newsblur.com/social/like_comment";
@@ -45,6 +51,7 @@ public class APIConstants
 
   public static final String PARAMETER_FEEDS               = "feeds";
   public static final String PARAMETER_HASHES              = "h";
+  public static final String PARAMETER_STORY_HASH          = "story_hash";
   public static final String PARAMETER_PASSWORD            = "password";
   public static final String PARAMETER_USER_ID             = "user_id";
   public static final String PARAMETER_USERNAME            = "username";

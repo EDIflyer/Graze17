@@ -3,6 +3,11 @@ package com.graze17.activities;
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -12,6 +17,7 @@ import android.widget.TextView;
 import com.graze17.EntryManager;
 import com.graze17.Feed;
 import com.graze17.R;
+import com.graze17.util.SDKVersionUtil;
 
 public class ManageFeedActivity extends Activity
 {
@@ -42,6 +48,8 @@ public class ManageFeedActivity extends Activity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.manage_feed);
+
+    applyEdgeToEdge(findViewById(android.R.id.content));
 
     long feedId = getIntent().getExtras().getLong(EXTRA_FEED_ID);
     if (feedId == 0l)
@@ -98,6 +106,16 @@ public class ManageFeedActivity extends Activity
         finish();
       }
     });
+  }
+
+  private void applyEdgeToEdge(View view) {
+    if (view != null && SDKVersionUtil.getVersion() >= 21) {
+      ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+        return WindowInsetsCompat.CONSUMED;
+      });
+    }
   }
 
   private EntryManager getEntryManager()

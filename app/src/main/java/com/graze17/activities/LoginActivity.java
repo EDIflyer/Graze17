@@ -6,6 +6,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -32,6 +37,7 @@ import com.graze17.R;
 import com.graze17.SyncInterfaceFactory;
 import com.graze17.auth.AccountManagementUtils;
 import com.graze17.auth.IAccountManagementUtils;
+import com.graze17.util.SDKVersionUtil;
 import com.graze17.util.U;
 
 import java.util.ArrayList;
@@ -222,6 +228,8 @@ public class LoginActivity extends Activity implements OnClickListener
     {
       setContentView(R.layout.login);
 
+      applyEdgeToEdge(findViewById(android.R.id.content));
+
       // components
 
       captchaImageView = (WebView) findViewById(R.id.captcha_image);
@@ -287,6 +295,16 @@ public class LoginActivity extends Activity implements OnClickListener
       configureView(null, null);
     }
 
+  }
+
+  private void applyEdgeToEdge(View view) {
+    if (view != null && SDKVersionUtil.getVersion() >= 21) {
+      ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+        return WindowInsetsCompat.CONSUMED;
+      });
+    }
   }
 
   private void onError(Exception ex)

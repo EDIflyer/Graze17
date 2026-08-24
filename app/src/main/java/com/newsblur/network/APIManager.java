@@ -2,6 +2,7 @@ package com.newsblur.network;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -190,6 +191,47 @@ public class APIManager
     {
       return false;
     }
+  }
+
+  // NewsBlur retired the feed_id/story_id mark endpoints in favor of story_hash based ones
+  public boolean markStoryHashAsUnread(final String storyHash)
+  {
+    final APIClient client = new APIClient(context, cookie);
+    final ValueMultimap values = new ValueMultimap();
+    values.put(APIConstants.PARAMETER_STORY_HASH, storyHash);
+    final APIResponse response = client.post(APIConstants.URL_MARK_STORY_HASH_AS_UNREAD, values, false);
+    return (!response.isOffline && response.responseCode == 200 && !response.hasRedirected);
+  }
+
+  public boolean markStoryHashAsStarred(final String storyHash)
+  {
+    final APIClient client = new APIClient(context, cookie);
+    final ValueMultimap values = new ValueMultimap();
+    values.put(APIConstants.PARAMETER_STORY_HASH, storyHash);
+    final APIResponse response = client.post(APIConstants.URL_MARK_STORY_HASH_AS_STARRED, values, false);
+    return (!response.isOffline && response.responseCode == 200 && !response.hasRedirected);
+  }
+
+  public boolean markStoryHashAsUnstarred(final String storyHash)
+  {
+    final APIClient client = new APIClient(context, cookie);
+    final ValueMultimap values = new ValueMultimap();
+    values.put(APIConstants.PARAMETER_STORY_HASH, storyHash);
+    final APIResponse response = client.post(APIConstants.URL_MARK_STORY_HASH_AS_UNSTARRED, values, false);
+    return (!response.isOffline && response.responseCode == 200 && !response.hasRedirected);
+  }
+
+  public boolean markStoryHashesAsRead(final Collection<String> storyHashes)
+  {
+    final APIClient client = new APIClient(context, cookie);
+    final ValueMultimap values = new ValueMultimap();
+    for (String storyHash : storyHashes)
+    {
+      values.put(APIConstants.PARAMETER_STORY_HASH, storyHash);
+    }
+    final APIResponse response = client.post(APIConstants.URL_MARK_STORY_HASHES_AS_READ, values, false);
+    return (!response.isOffline && response.responseCode == 200 && !response.hasRedirected
+        && !response.responseString.contains("Nothing was marked as read"));
   }
 
   public CategoriesResponse getCategories()

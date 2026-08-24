@@ -10,6 +10,13 @@ import android.os.Handler;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceScreen;
+import android.view.View;
+
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 
 import com.graze17.DashboardListActivity;
 import com.graze17.EntryManager;
@@ -28,9 +35,12 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
+
     final EntryManager em = EntryManager.getInstance(this);
 
     addPreferencesFromResource(R.xml.settings);
+
+    applyEdgeToEdge(getListView());
 
     getPreferenceScreen().setOnPreferenceChangeListener(em);
 
@@ -102,6 +112,67 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
       });
     }
 
+  }
+
+  @Override
+  public void onContentChanged() {
+    super.onContentChanged();
+    applyEdgeToEdge(getListView());
+  }
+
+  private void applyEdgeToEdge(View view) {
+    if (view == null || SDKVersionUtil.getVersion() < 21) {
+      return;
+    }
+
+    if (view instanceof android.widget.ListView) {
+      android.widget.ListView lv = (android.widget.ListView) view;
+      lv.setClipToPadding(false);
+      
+      ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
+        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+        v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), systemBars.bottom);
+        return insets; // Pass along
+      });
+      ViewCompat.requestApplyInsets(view);
+    }
+  }
+
+  @Override
+  public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+    boolean result = super.onPreferenceTreeClick(preferenceScreen, preference);
+    if (preference instanceof PreferenceScreen) {
+      PreferenceScreen screen = (PreferenceScreen) preference;
+      
+      Runnable applyFix = () -> {
+        Dialog dialog = screen.getDialog();
+        if (dialog != null && dialog.getWindow() != null) {
+          View decorView = dialog.getWindow().getDecorView();
+          View lv = findListView(decorView);
+          if (lv != null) {
+            applyEdgeToEdge(lv);
+          }
+        }
+      };
+
+      handler.post(applyFix);
+      handler.postDelayed(applyFix, 10);
+    }
+    return result;
+  }
+
+  private View findListView(View v) {
+    if (v instanceof android.widget.ListView) {
+      return v;
+    }
+    if (v instanceof android.view.ViewGroup) {
+      android.view.ViewGroup vg = (android.view.ViewGroup) v;
+      for (int i = 0; i < vg.getChildCount(); i++) {
+        View child = findListView(vg.getChildAt(i));
+        if (child != null) return child;
+      }
+    }
+    return null;
   }
 
   private void disableSetting(EntryManager em, String keyOfPref)
