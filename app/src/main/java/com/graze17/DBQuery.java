@@ -156,6 +156,12 @@ public class DBQuery
     setShouldHideReadItems(entryManager.getSharedPreferences().getBoolean(EntryManager.SETTINGS_HIDE_READ_ITEMS, shouldHideReadItems()));
   }
 
+  public void updateSortOrder()
+  {
+    internalRepresentation = null;
+    setSortOrderAscending(!entryManager.shouldShowNewestArticlesFirst());
+  }
+
   public void setFilterFeedId(Long feedId)
   {
     internalRepresentation = null;

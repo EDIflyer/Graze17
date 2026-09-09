@@ -13,7 +13,7 @@ public class SyncInterfaceFactory
 
   public static BackendProvider getSyncInterface(Context context)
   {
-    SharedPreferences sharedPreferences = context.getSharedPreferences("com.graze17_preferences", Context.MODE_PRIVATE);
+    SharedPreferences sharedPreferences = context.getSharedPreferences(EntryManager.PREFERENCES_NAME, Context.MODE_PRIVATE);
     String className = sharedPreferences.getString(EntryManager.SETTINGS_SERVICE_PROVIDER, "com.graze17.NewsBlurBackendProvider");
 
     Log.d(TAG, "Attempting to load sync class: " + className);

@@ -3,7 +3,7 @@
 This plan breaks the current broad rename change-set into reviewable commits without using interactive git.
 
 ## Goal
-- Keep `applicationId` unchanged (`com.graze17`) for now.
+- Set `applicationId` to `com.graze17`; the identity migration was approved because the app is not currently distributed through the Play Store.
 - Keep internal namespace/package migration to `com.graze17`.
 - Isolate risk by area so each commit can be validated independently.
 
@@ -97,5 +97,5 @@ git log --oneline -n 10
 ```
 
 ## Safety Notes
-- Avoid changing `applicationId` in this phase.
+- Existing `com.graze16` installations must be uninstalled before installing the `com.graze17` package.
 - If one bucket fails at runtime, revert only that commit later instead of rolling back everything.

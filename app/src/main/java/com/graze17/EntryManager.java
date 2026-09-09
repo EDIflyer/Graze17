@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -147,6 +148,7 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
   static final String         SETTINGS_ELLIPSIZE_TITLES_ENABLED                    = "settings_ellipsize_titles_enabled2";
   static final String         SETTINGS_EMAIL                                       = "email";
 
+  public static final String  PREFERENCES_NAME                                     = "com.graze17_preferences";
   static final String         SETTINGS_ENTRY_MANAGER_CAPACITY                      = "settings_entry_manager_entries_capacity";
 
   private static final String SETTINGS_FIRST_INSTALLED_VERSION                     = "settings_first_installed_version";
@@ -356,7 +358,8 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
     isMarkAllReadPossibleCache = new HashMap<DBQuery, Boolean>();
     contentCountCache = new HashMap<DBQuery, Integer>();
 
-    sharedPreferences = context.getSharedPreferences("com.graze17_preferences", Context.MODE_PRIVATE);
+    sharedPreferences = context.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
+    migrateDefaultPreferences(context);
 
     newsRobSettings = new NewsRobSettings(this, sharedPreferences);
     ctx = context;
@@ -382,6 +385,52 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
     addListener(newsRobNotificationManager);
     setUpAdSenseSpec();
 
+  }
+
+  private void migrateDefaultPreferences(Context context)
+  {
+    SharedPreferences legacyPreferences = context.getSharedPreferences(context.getPackageName() + "_preferences", Context.MODE_PRIVATE);
+    Map<String, ?> values = legacyPreferences.getAll();
+    if (values.isEmpty())
+    {
+      return;
+    }
+
+    Editor editor = sharedPreferences.edit();
+    for (Map.Entry<String, ?> value : values.entrySet())
+    {
+      if (sharedPreferences.contains(value.getKey()))
+      {
+        continue;
+      }
+
+      Object item = value.getValue();
+      if (item instanceof Boolean)
+      {
+        editor.putBoolean(value.getKey(), (Boolean) item);
+      }
+      else if (item instanceof Float)
+      {
+        editor.putFloat(value.getKey(), (Float) item);
+      }
+      else if (item instanceof Integer)
+      {
+        editor.putInt(value.getKey(), (Integer) item);
+      }
+      else if (item instanceof Long)
+      {
+        editor.putLong(value.getKey(), (Long) item);
+      }
+      else if (item instanceof String)
+      {
+        editor.putString(value.getKey(), (String) item);
+      }
+      else if (item instanceof Set)
+      {
+        editor.putStringSet(value.getKey(), (Set<String>) item);
+      }
+    }
+    SDK9Helper.apply(editor);
   }
 
   public void acceptLicense()

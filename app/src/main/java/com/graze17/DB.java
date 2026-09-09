@@ -1030,6 +1030,10 @@ public class DB extends SQLiteOpenHelper
     String sql = getContentCursorSQL(query, selectionArgs);
     String[] sArgs = selectionArgs.toArray(new String[selectionArgs.size()]);
 
+    if (NewsRob.isDebuggingEnabled(context)) {
+        PL.log("getContentCursor: sql=" + sql, context);
+    }
+
     Timing t2 = new Timing("rawQuery", context);
 
     Cursor c = getReadOnlyDb().rawQuery(sql, sArgs);
@@ -1070,7 +1074,8 @@ public class DB extends SQLiteOpenHelper
     }
 
     // sort order
-    sql += (query.isSortOrderAscending() ? " ASC" : " DESC") + ",\n  entries._id\n";
+    String direction = query.isSortOrderAscending() ? " ASC" : " DESC";
+    sql += "\nORDER BY entries.UPDATED_UTC" + direction + ", entries._id" + direction + "\n";
 
     if (query.getLimit() > 0)
     {

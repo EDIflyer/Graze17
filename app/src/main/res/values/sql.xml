@@ -14,8 +14,12 @@ WHERE\n
 <string name="sql_feeds_query">
 SELECT\n
   _id,\n
+  -- read-all-mark\n
   SUM(read_freq+unread_freq) AS frequency,\n
+  -- read-all-mark-end\n
+  -- read-unread-only-mark\n
   SUM(unread_freq) AS frequency,\n
+  -- read-unread-only-mark-end\n
   SUM(unread_freq) AS sum_unread_freq,\n
   ord\n,
   feed_id\n
@@ -30,20 +34,25 @@ FROM(\n
 	  \n
   FROM \n
     entries\n
+    -- labels-mark\n
     ,entry_label_associations as elas,\n
     labels	\n
+    -- labels-mark-end\n
 \n
   WHERE \n
     entries.read_state = 1\n
-    AND entries.read_state &lt; ?\n
-    AND entries.starred_state &gt; ?\n
-    AND entries.friends_shared_state &gt; ? \n
-    AND lower(labels.name) = ?\n
+    AND entries.read_state &lt; ?1\n
+    AND entries.starred_state &gt; ?2\n
+    AND entries.friends_shared_state &gt; ?3 \n
+    \n
+    -- labels-mark\n
+    AND lower(labels.name) = ?4\n
     AND entries._id = elas.entry_id\n
 	AND elas.label_id = labels._id\n
+    -- labels-mark-end\n
 \n
 UNION\n
-  
+  \n
   SELECT\n
     \'all articles\' AS _id,\n
 	-100 AS ord,\n
@@ -53,21 +62,26 @@ UNION\n
 	  \n
   FROM \n
     entries\n
+    -- labels-mark\n
     ,entry_label_associations as elas,\n
     labels	\n
+    -- labels-mark-end\n
 \n
   WHERE \n
     entries.read_state &lt; 1\n
-    AND entries.read_state &lt; ?\n
-    AND entries.starred_state &gt; ?\n
-    AND entries.friends_shared_state &gt; ? \n
-    AND lower(labels.name) = ?\n
+    AND entries.read_state &lt; ?1\n
+    AND entries.starred_state &gt; ?2\n
+    AND entries.friends_shared_state &gt; ?3 \n
+    \n
+    -- labels-mark\n
+    AND lower(labels.name) = ?4\n
     AND entries._id = elas.entry_id\n
 	AND elas.label_id = labels._id\n
+    -- labels-mark-end\n
 \n
-  
+  \n
 UNION\n
-
+\n
   SELECT  \n
     lower(feeds.title) AS _id,\n
     0 AS ord, \n
@@ -78,25 +92,30 @@ UNION\n
   FROM \n
     entries, \n
     feeds \n
+    -- labels-mark\n
     ,entry_label_associations as elas,\n
     labels	\n
-
+    -- labels-mark-end\n
+\n
   WHERE \n
     entries.read_state = 1\n
-    AND entries.read_state &lt; ?\n
+    AND entries.read_state &lt; ?1\n
     AND feeds._id = entries.feed_id  \n
-    AND entries.starred_state &gt; ?\n
-    AND entries.friends_shared_state &gt; ? \n
- 	AND lower(labels.name) = ?\n
+    AND entries.starred_state &gt; ?2\n
+    AND entries.friends_shared_state &gt; ?3 \n
+\n
+    -- labels-mark\n
+ 	AND lower(labels.name) = ?4\n
     AND entries._id = elas.entry_id\n
 	AND elas.label_id = labels._id\n
-
+    -- labels-mark-end\n
+        \n
   GROUP BY \n
     feeds.title,\n
     feeds._id\n
-
+\n
 UNION\n
-
+\n
   SELECT  \n
     lower(feeds.title) AS _id,\n
     0 AS ord, \n
@@ -107,23 +126,28 @@ UNION\n
   FROM \n
     entries, \n
     feeds \n
+    -- labels-mark\n
     ,entry_label_associations as elas,\n
     labels	\n
-
+    -- labels-mark-end\n
+\n
   WHERE \n
     entries.read_state &lt; 1\n
-    AND entries.read_state &lt; ?\n
+    AND entries.read_state &lt; ?1\n
     AND feeds._id = entries.feed_id  \n
-    AND entries.starred_state &gt; ?\n
-    AND entries.friends_shared_state &gt; ? \n
- 	AND lower(labels.name) = ?\n
+    AND entries.starred_state &gt; ?2\n
+    AND entries.friends_shared_state &gt; ?3 \n
+\n
+    -- labels-mark\n
+ 	AND lower(labels.name) = ?4\n
     AND entries._id = elas.entry_id\n
 	AND elas.label_id = labels._id\n
-
+    -- labels-mark-end\n
+        \n
   GROUP BY \n
     feeds.title, feeds._id)\n
  \n
-  
+  \n
 GROUP BY\n
   ord,\n
   _id,\n
@@ -236,7 +260,7 @@ AS\n
 \n
         WHERE\n
           entries.read_state &lt; 1\n
-
+          \n
    UNION \n
 \n
      SELECT\n
@@ -296,14 +320,15 @@ AS\n
 	 WHERE\n
 	   entries.type = \'N\'\n
 	   AND entries.read_state &lt; 0\n
-\n 
+\n
 		  )  \n
 \n
    GROUP BY\n
      ord,\n
-     _id\n
-</string>
-    <string name="sql_create_view">
+     _id;\n
+\n
+    </string>\n
+    <string name="sql_create_view">\n
 CREATE VIEW\n
   entries_view\n
 AS\n
@@ -352,45 +377,58 @@ AS\n
 	feeds._id = entries.feed_id\n
    ORDER BY\n
      entries.UPDATED_UTC DESC\n
-    </string>
-    <string name="sql_mark_all_read_label">
+    </string>\n
+    <string name="sql_mark_all_read_label">\n
 UPDATE\n
   entries\n
 SET\n
   read_state = 1, \n
-  read_state_pending = read_state_pending * -1 + 1\n
+  read_state_pending = read_state_pending * -1 + 1\n -- END-OF-UPDATE\n
 WHERE\n
   read_state = 0 AND\n
-  INSERTED_AT > ? AND\n
+  INSERTED_AT > ? AND\n -- D_L --\n
   rowid IN \n
   (SELECT \n
      entries.rowid\n
    FROM \n
     entries\n
 \n
+   -- feeds-needed\n
    ,feeds\n
+   -- feeds-needed-end\n
 \n
+    -- labels-mark\n
     ,entry_label_associations as elas,\n
     labels\n
+    -- labels-mark-end\n
 \n
    WHERE\n
    entries.read_state = 0\n
    AND entries.starred_state &gt; ?\n
    AND entries.friends_shared_state &gt; ? \n
 \n
+   -- feeds-needed\n
    AND feeds._id = entries.feed_id\n
+   -- feeds-needed-end\n
 \n
- 
+ \n
+   -- feeds-mark\n
    AND feeds._id = ?\n
+   -- feeds-mark-end\n
 \n
+   -- notification-feeds-mark\n
    AND feeds.NOTIFICATION > 0\n
+    -- notification-feeds-mark-end\n
 \n
+   -- labels-mark\n
    AND (lower(labels.name) = ? \n
    AND entries._id = elas.ENTRY_ID AND  elas.LABEL_ID = labels._id)\n
+   -- labels-mark-end \n
+   --LIMIT-- \n
 \n)\n
-</string>
-
-<string name="sql_content_cursor_query">
+</string>\n
+\n
+<string name="sql_content_cursor_query">\n
 SELECT \n
   entries._id,\n
   entries.ATOM_ID,\n
@@ -424,27 +462,33 @@ SELECT \n
 FROM\n
   feeds,\n
   entries\n
+  -- labels-mark\n
   ,entry_label_associations as elas,\n
   labels\n
+  -- labels-mark-end\n
 WHERE\n
    read_state &lt; ?\n
    AND entries.INSERTED_AT > ?\n
    AND feeds._id = entries.feed_id\n
    AND entries.starred_state &gt; ?\n
    AND entries.friends_shared_state &gt; ? \n
- 
+ \n
 \n
+   -- feeds-mark\n
    AND feeds._id = ?\n
+   -- feeds-mark-end\n
 \n
+   -- notification-feeds-mark\n
    AND feeds.NOTIFICATION > 0\n
+   -- notification-feeds-mark-end\n
 \n
+   -- labels-mark\n
    AND (lower(labels.name) = ? \n
    AND entries._id = elas.ENTRY_ID AND  elas.LABEL_ID = labels._id)\n
+   -- labels-mark-end \n
   \n
-ORDER BY\n
-  entries.UPDATED_UTC \n
-</string>
-<string name="sql_mark_as_read_even_when_pinned">
+</string>\n
+<string name="sql_mark_as_read_even_when_pinned">\n
 UPDATE \n
   entries\n
 SET\n
@@ -460,8 +504,8 @@ WHERE\n
       entries.atom_id = temp_ids.atom_id\n
   )\n
   AND read_state_pending = 0\n
-</string>
-<string name="sql_mark_as_read_even_when_pinned_hash">
+</string>\n
+<string name="sql_mark_as_read_even_when_pinned_hash">\n
 UPDATE \n
   entries\n
 SET\n
@@ -477,8 +521,9 @@ WHERE\n
       entries.entry_hash = temp_ids.atom_id\n
   )\n
   AND read_state_pending = 0\n
-</string>
-<string name="sql_mark_as_x">
+</string>\n
+<!-- 0 && 1 -->\n
+<string name="sql_mark_as_x">\n
 UPDATE \n
   entries\n
 SET\n
@@ -494,8 +539,8 @@ WHERE\n
       entries.atom_id = temp_ids.atom_id\n
   )\n
   AND -STATE_PENDING- = 0\n
-</string>
-<string name="sql_mark_as_x_hash">
+</string>\n
+<string name="sql_mark_as_x_hash">\n
 UPDATE \n
   entries\n
 SET\n
@@ -511,8 +556,8 @@ WHERE\n
       entries.entry_hash = temp_ids.atom_id\n
   )\n
   AND -STATE_PENDING- = 0\n
-</string>
-<string name="sql_delete_existing_from_temp_table">
+</string>\n
+<string name="sql_delete_existing_from_temp_table">\n
 DELETE \n
 FROM\n
   temp_ids\n
@@ -525,8 +570,8 @@ WHERE\n
     WHERE\n
       entries.atom_id = temp_ids.atom_id\n
   )\n
-</string>
-<string name="sql_delete_existing_hashes_from_temp_table">
+</string>\n
+<string name="sql_delete_existing_hashes_from_temp_table">\n
 DELETE \n
 FROM\n
   temp_ids\n
@@ -539,87 +584,160 @@ WHERE\n
     WHERE\n
       entries.entry_hash = temp_ids.atom_id\n
   )\n
-</string>
-<string name="sql_select_next_articles_to_fetch">
+</string>\n
+<string name="sql_select_next_articles_to_fetch">\n
 SELECT\n
   ATOM_ID \n
 FROM\n
   temp_ids_READ\n
 LIMIT \n
-</string>
-<string name="sql_select_next_hashes_to_fetch">
+</string>\n
+<string name="sql_select_next_hashes_to_fetch">\n
 SELECT\n
   ATOM_ID \n
 FROM\n
   temp_ids_READ_HASHES\n
 ORDER BY TIMESTAMP \n
-</string>
-<string name="sql_get_ids_to_delete">
+</string>\n
+<string name="sql_get_ids_to_delete">\n
 SELECT\n
-  _id,\n
+\n
+  _id\n
+,\n
   atom_id\n
+\n
 FROM\n
+\n
   entries\n
+\n
 WHERE\n
-  read_state_pending = 0 AND\n
-  starred_state_pending = 0 AND\n
-  shared_state_pending = 0 AND\n
-  liked_state_pending = 0 AND\n
-  pinned_state_pending = 0 AND\n
-  NOT (note_submitted_state = 0 AND note IS NOT null)\n
-  AND read_state = 1\n
 \n
-  AND (entries.atom_id NOT IN (\n
-    SELECT\n
-      e2.atom_id\n
-    FROM\n
-      entries e2\n
-    WHERE\n
-      e2.starred_state = 1\n
-    ORDER BY\n
-      e2.read_state ASC,\n
-      e2.UPDATED_UTC DESC\n
+  read_state_pending = 0 \n
+ \n
+  AND starred_state_pending = 0 \n
+ \n
+  AND shared_state_pending = 0 \n
+\n
+  AND liked_state_pending = 0 \n
+\n
+  AND pinned_state_pending = 0\n
+\n
+\n
+  AND NOT (note_submitted_state = 0 AND note IS NOT null)\n
+  \n
+  -- MARK BEGIN \n
+\n
+  AND read_state = 1 \n
+ \n
+  -- MARK END \n
+ \n
+\n
+\n
+ -- Starred Articles\n
+\n
+  AND (entries.atom_id NOT IN ( \n
+\n
+    SELECT \n
+\n
+      e2.atom_id  \n
+\n
+    FROM \n
+\n
+      entries e2 \n
+\n
+    WHERE \n
+\n
+      e2.starred_state = 1  \n
+\n
+    ORDER BY \n
+\n
+      e2.read_state ASC\n
+,\n
+      e2.UPDATED_UTC DESC  \n
+    \n
     LIMIT ?)\n
 \n
-  AND entries.atom_id NOT IN (\n
-    SELECT\n
-      e2.atom_id\n
-    FROM\n
-      entries e2\n
-    WHERE\n
-      e2.shared_state = 1\n
-    ORDER BY\n
-      e2.read_state ASC,\n
-      e2.UPDATED_UTC DESC\n
-    LIMIT ?)\n
+\n
+\n
+-- Shared Articles\n
 \n
   AND entries.atom_id NOT IN (\n
-    SELECT\n
-      e2.atom_id\n
-    FROM\n
-      entries e2\n
-    WHERE\n
+\n
+    SELECT \n
+\n
+      e2.atom_id  \n
+\n
+    FROM \n
+\n
+      entries e2 \n
+\n
+    WHERE \n
+\n
+      e2.shared_state = 1  \n
+\n
+    ORDER BY \n
+\n
+      e2.read_state ASC\n
+,\n
+      e2.UPDATED_UTC DESC  \n
+    \n
+    LIMIT ?)\n
+\n
+\n
+    \n
+-- Notes\n
+\n
+  AND entries.atom_id NOT IN (\n
+\n
+    SELECT \n
+\n
+      e2.atom_id  \n
+\n
+    FROM \n
+\n
+      entries e2 \n
+\n
+    WHERE \n
+\n
       e2.type = \'N\'\n
-    ORDER BY\n
-      e2.read_state ASC,\n
-      e2.UPDATED_UTC DESC\n
+\n
+    ORDER BY \n
+\n
+      e2.read_state ASC\n
+,\n
+      e2.UPDATED_UTC DESC  \n
+    \n
     LIMIT ?)\n
 \n
+\n
   AND entries.atom_id NOT IN (\n
-    SELECT\n
-      e2.atom_id\n
-    FROM\n
-      entries e2\n
-    ORDER BY\n
-      e2.UPDATED_UTC DESC\n
+\n
+    SELECT \n
+\n
+      e2.atom_id  \n
+\n
+    FROM \n
+\n
+      entries e2 \n
+\n
+    ORDER BY \n
+\n
+      e2.UPDATED_UTC DESC  \n
+    \n
     LIMIT ?)\n
+  \n
   )\n
 \n
+\n
 ORDER BY\n
-  READ_STATE DESC,\n
+\n
+  READ_STATE DESC\n
+, -- prefer to delete read over unread over pinned \n
+\n
   UPDATED_UTC ASC\n
-</string>
-<string name="sql_remove_deleted_notes">
+\n
+</string>\n
+<string name="sql_remove_deleted_notes">\n
 DELETE \n
 FROM\n
   entries\n
@@ -629,7 +747,7 @@ WHERE\n
   AND starred_state_pending = 0 \n 
   AND shared_state_pending = 0 \n
   AND pinned_state_pending = 0 \n
-  AND NOT (note_submitted_state = 0 AND note IS NOT null)\n    
+  AND NOT (note_submitted_state = 0 AND note IS NOT null)\n    \n
   AND NOT EXISTS(\n
   	SELECT\n
       1 \n

@@ -206,10 +206,10 @@ public class FeedListActivity extends AbstractNewsRobListActivity
     StringBuilder sb = new StringBuilder();
     DBQuery dbq = getDbQuery();
     if (dbq.getFilterLabel() != null && !"all articles".equals(dbq.getFilterLabel()))
-      sb.append("- " + dbq.getFilterLabel());
+      sb.append(dbq.getFilterLabel());
     if (sb.length() == 0)
-      sb.append("- Feeds");
-    return getResources().getString(R.string.app_name) + " " + sb.toString();
+      sb.append("All Feeds");
+    return sb.toString();
   }
 
   @Override

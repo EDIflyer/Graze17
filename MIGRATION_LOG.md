@@ -4,7 +4,7 @@
 - Baseline reference: commit `75f0859a6197d06acf3b8bedb69cc31bb4fd40c1`
 - Goal: Android 17 (API 37) readiness and stability
 - Rename plan in progress: phase 1 (label/branding) and phase 2 (internal package/class names)
-- Explicitly unchanged: `applicationId` remains `com.graze17`
+- Application identity migration approved: `applicationId` is now `com.graze17`; no Play Store upgrade path currently needs to be preserved.
 
 ## Changes
 
@@ -35,6 +35,8 @@
 | M23 | Theme-Aware Article Header Drawable | Replaced non-themed drawable loads in article header rendering with `ContextCompat.getDrawable(...)` to resolve theme-attribute warnings and improve Android 17 compatibility | Low | `./gradlew assembleDebug -x lint` success; runtime warning check pending | Done (code), runtime check pending |
 | M24 | Starred Retention Fix | Protected starred entries from automatic capacity cleanup so they are not deleted and re-downloaded on each sync cycle; this preserves the “my recently starred” list and prevents repeated churn | High | `./gradlew assembleDebug -x lint` success; runtime starred-retention validation pending on Android 17 | Done (code), runtime check pending |
 | M24 | Starred Retention Fix | Protected starred entries from automatic capacity-pruning so they are not deleted and re-downloaded on each sync cycle; this preserves the “recently starred” list without repeated churn | High | `./gradlew assembleDebug -x lint` success; runtime starred-retention check pending on Android 17 | Done (code), runtime check pending |
+| M25 | Preference Store Alignment | Unified SettingsActivity, EntryManager, and SyncInterfaceFactory on `com.graze17_preferences`; migrated missing values from the package-default store so capacity and sort preferences control sync and article ordering | High | `./gradlew :app:compileDebugJavaWithJavac` success; device preference migration check pending | Done (code), runtime validation pending |
+| M26 | Application Identity Alignment | Changed the Gradle application ID from `com.graze16` to `com.graze17` to match the namespace, packages, manifest, and branding after confirming there is no Play Store upgrade path to preserve | High | `./gradlew :app:assembleDebug -x lint` pending; fresh-install validation pending | Done (code), runtime validation pending |
 
 ## Open Verification Matrix
 

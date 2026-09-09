@@ -467,12 +467,16 @@ public class ArticleListActivity extends AbstractNewsRobListActivity implements 
 
     if (title != null)
       return title + " (" + count + ")";
+    
     String labelAndFeed = "";
-    if (dbQuery.getFilterLabel() != null && !"all articles".equals(dbQuery.getFilterLabel()))
-      labelAndFeed = "- " + dbQuery.getFilterLabel() + " ";
     if (feedName != null)
-      labelAndFeed += "- " + feedName;
-    return String.format("%s %s (%s)", getResources().getString(R.string.app_name), labelAndFeed, count);
+      labelAndFeed = feedName;
+    else if (dbQuery.getFilterLabel() != null && !"all articles".equals(dbQuery.getFilterLabel()))
+      labelAndFeed = dbQuery.getFilterLabel();
+    else
+      labelAndFeed = "All Articles";
+
+    return String.format("%s (%s)", labelAndFeed, count);
   }
 
   @Override

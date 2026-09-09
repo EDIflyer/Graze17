@@ -7,7 +7,7 @@ android {
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.graze16"
+        applicationId = "com.graze17"
         minSdkVersion = 21
         targetSdkVersion = 37
         versionCode = 316

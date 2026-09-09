@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.view.View;
 
@@ -38,6 +39,8 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
 
     final EntryManager em = EntryManager.getInstance(this);
 
+    PreferenceManager.setDefaultValues(this, EntryManager.PREFERENCES_NAME, MODE_PRIVATE, R.xml.settings, false);
+    getPreferenceManager().setSharedPreferencesName(EntryManager.PREFERENCES_NAME);
     addPreferencesFromResource(R.xml.settings);
 
     applyEdgeToEdge(getListView());

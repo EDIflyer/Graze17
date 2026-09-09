@@ -463,6 +463,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
         progressPanelManuallyHiddenDuringSync = false;
         syncUiActive = false;
         updateButtons();
+        updateControlPanelTitle();
         deactivateProgressIndicator();
 
         if (result instanceof SynchronizeModelSucceeded)
@@ -921,7 +922,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     super.onPostCreate(savedInstanceState);
     Toolbar toolbar = findViewById(R.id.activity_actionbar);
     setSupportActionBar(toolbar);
-    getSupportActionBar().setTitle("Graze17");
+    updateControlPanelTitle();
     getSupportActionBar().setHomeAsUpIndicator(R.drawable.gen_logo_32dp);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     toolbar.setTitleTextColor(Color.WHITE);
@@ -1023,6 +1024,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
   @Override
   public boolean onPrepareOptionsMenu(Menu menu)
   {
+    updateControlPanelTitle();
     applySyncMenuState(menu);
 
     MenuItem showHideItem = menu.findItem(R.id.menu_show_hide);
@@ -1128,6 +1130,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     if (!reopenIfThemeOrActionBarLocationChanged())
     {
       getDbQuery().updateShouldHideReadItems();
+      getDbQuery().updateSortOrder();
       modelUpdated();
 
       refreshUI(); // LATER Maybe I should maintain and check lastModified
@@ -1566,10 +1569,18 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     return syncUiActive || backendSyncInProgress;
   }
 
-  private void updateControlPanelTitle()
+  protected void updateControlPanelTitle()
   {
+    String title = getDefaultStatusBarTitle();
+    if (getSupportActionBar() != null) {
+      getSupportActionBar().setTitle(title);
+    }
+    setTitle(title);
+
     TextView controlPanelTitle = (TextView) findViewById(R.id.control_panel_title);
-    controlPanelTitle.setText(getDefaultStatusBarTitle());
+    if (controlPanelTitle != null) {
+      controlPanelTitle.setText(title);
+    }
   }
 
 }
