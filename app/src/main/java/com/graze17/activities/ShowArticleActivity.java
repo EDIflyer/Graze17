@@ -34,6 +34,8 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
+import android.window.OnBackInvokedCallback;
+import android.window.OnBackInvokedDispatcher;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebHistoryItem;
@@ -952,6 +954,21 @@ public class ShowArticleActivity extends Activity implements IEntryModelUpdateLi
     }
 
     setContentView(com.graze17.R.layout.show_article);
+
+    // onKeyDown(KEYCODE_BACK) is not invoked when predictive back / gesture navigation is used,
+    // so leavingThisActivity would never be set and onPause() would wrongly revert the read state.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    {
+      getOnBackInvokedDispatcher().registerOnBackInvokedCallback(OnBackInvokedDispatcher.PRIORITY_DEFAULT, new OnBackInvokedCallback()
+      {
+        @Override
+        public void onBackInvoked()
+        {
+          leavingThisActivity = true;
+          finish();
+        }
+      });
+    }
 
     googleAdsUtil = new GoogleAdsUtil(getEntryManager());
 
