@@ -305,7 +305,6 @@
             android:summary="@string/about_github_summary" />
         <Preference
             android:key="about_version_preference"
-            android:icon="@drawable/grazerss_logo_32x32"
             android:title="@string/about_version_title"
             android:summary="@string/about_version_summary" />
     </PreferenceScreen>

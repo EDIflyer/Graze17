@@ -4,14 +4,10 @@ plugins {
 
 def gitCommitHash = {
     try {
-        def stdout = new ByteArrayOutputStream()
-        exec {
+        def output = providers.exec {
             commandLine 'git', 'rev-parse', '--short', 'HEAD'
-            standardOutput = stdout
-            ignoreExitValue = true
-        }
-        def hash = stdout.toString().trim()
-        return hash.isEmpty() ? "unknown" : hash
+        }.standardOutput.asText.get().trim()
+        return output.isEmpty() ? "unknown" : output
     } catch (Exception ignored) {
         return "unknown"
     }
@@ -27,8 +23,8 @@ android {
         applicationId = "com.graze17"
         minSdkVersion = 21
         targetSdkVersion = 37
-        versionCode = 316
-        versionName = "3.1.6"
+        versionCode = 400
+        versionName = "4.0.0"
 
         buildConfigField "String", "GIT_COMMIT_HASH", "\"${gitCommitHash}\""
         buildConfigField "String", "BUILD_DATE", "\"${buildDate}\""

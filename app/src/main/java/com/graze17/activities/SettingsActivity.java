@@ -12,10 +12,16 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 
@@ -37,13 +43,17 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   {
     super.onCreate(savedInstanceState);
 
+    // Dialog windows (nested PreferenceScreens) never auto-fit system windows; disable it here
+    // too so our manual inset padding below isn't applied on top of an automatic one.
+    WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+
     final EntryManager em = EntryManager.getInstance(this);
 
     PreferenceManager.setDefaultValues(this, EntryManager.PREFERENCES_NAME, MODE_PRIVATE, R.xml.settings, false);
     getPreferenceManager().setSharedPreferencesName(EntryManager.PREFERENCES_NAME);
     addPreferencesFromResource(R.xml.settings);
 
-    applyEdgeToEdge(getListView());
+    addTitleBarAndInsets((ViewGroup) findViewById(android.R.id.content), getListView(), getString(R.string.settings_title));
 
     getPreferenceScreen().setOnPreferenceChangeListener(em);
 
@@ -131,24 +141,79 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   @Override
   public void onContentChanged() {
     super.onContentChanged();
-    applyEdgeToEdge(getListView());
+    addTitleBarAndInsets((ViewGroup) findViewById(android.R.id.content), getListView(), getString(R.string.settings_title));
   }
 
-  private void applyEdgeToEdge(View view) {
-    if (view == null || SDKVersionUtil.getVersion() < 21) {
+  private static final String TITLE_BAR_TAG = "graze_settings_title_bar";
+
+  /** Adds (or updates) a fixed title bar over a preference ListView's window content and pads/scrolls the list to sit below it and the status bar. */
+  private void addTitleBarAndInsets(ViewGroup contentRoot, View view, CharSequence title) {
+    if (contentRoot == null || !(view instanceof ListView)) {
       return;
     }
 
-    if (view instanceof android.widget.ListView) {
-      android.widget.ListView lv = (android.widget.ListView) view;
-      lv.setClipToPadding(false);
-      
-      ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-        Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-        v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), systemBars.bottom);
-        return insets; // Pass along
-      });
-      ViewCompat.requestApplyInsets(view);
+    final ListView lv = (ListView) view;
+
+    // PreferenceActivity's internal legacy layout has fitsSystemWindows="true" baked in on an
+    // ancestor, which independently pads for the status bar on top of our own inset handling
+    // below, causing a doubled-up gap. Disable it so only our padding applies.
+    clearFitsSystemWindows(contentRoot);
+
+    TextView existingTitleBar = contentRoot.findViewWithTag(TITLE_BAR_TAG);
+    if (existingTitleBar != null) {
+      // Already set up (insets listener + scroll reset) for this window; just refresh the text.
+      existingTitleBar.setText(title);
+      return;
+    }
+
+    final int titleBarHeightPx = (int) (56 * getResources().getDisplayMetrics().density);
+    final TextView titleBar = new TextView(this);
+    titleBar.setTag(TITLE_BAR_TAG);
+    titleBar.setText(title);
+    titleBar.setTextColor(0xFFFFFFFF);
+    titleBar.setTextSize(20);
+    titleBar.setGravity(Gravity.CENTER_VERTICAL);
+    int hpad = (int) (16 * getResources().getDisplayMetrics().density);
+    titleBar.setPadding(hpad, 0, hpad, 0);
+    titleBar.setBackgroundColor(0xFF1A1A1A);
+    titleBar.setElevation(4 * getResources().getDisplayMetrics().density);
+    FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, titleBarHeightPx, Gravity.TOP);
+    contentRoot.addView(titleBar, lp);
+
+    lv.setClipToPadding(true);
+    // Keep the scrollbar within the padded content area so it doesn't render behind/above the title bar.
+    lv.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+
+    if (SDKVersionUtil.getVersion() < 21) {
+      lv.setPadding(lv.getPaddingLeft(), titleBarHeightPx, lv.getPaddingRight(), lv.getPaddingBottom());
+      return;
+    }
+
+    ViewCompat.setOnApplyWindowInsetsListener(contentRoot, (v, insets) -> {
+      Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+
+      ViewGroup.LayoutParams rawLp = titleBar.getLayoutParams();
+      if (rawLp instanceof ViewGroup.MarginLayoutParams) {
+        ((ViewGroup.MarginLayoutParams) rawLp).topMargin = systemBars.top;
+        titleBar.setLayoutParams(rawLp);
+      }
+
+      lv.setPadding(lv.getPaddingLeft(), systemBars.top + titleBarHeightPx, lv.getPaddingRight(), systemBars.bottom);
+
+      // Without this the list can start scrolled so the first item hides above the fold.
+      lv.post(() -> lv.setSelectionFromTop(0, 0));
+      return insets; // Pass along
+    });
+    ViewCompat.requestApplyInsets(contentRoot);
+  }
+
+  private void clearFitsSystemWindows(View v) {
+    v.setFitsSystemWindows(false);
+    if (v instanceof ViewGroup) {
+      ViewGroup vg = (ViewGroup) v;
+      for (int i = 0; i < vg.getChildCount(); i++) {
+        clearFitsSystemWindows(vg.getChildAt(i));
+      }
     }
   }
 
@@ -156,18 +221,18 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
     boolean result = super.onPreferenceTreeClick(preferenceScreen, preference);
     if (preference instanceof PreferenceScreen) {
-      PreferenceScreen screen = (PreferenceScreen) preference;
+      final PreferenceScreen screen = (PreferenceScreen) preference;
       
       Runnable applyFix = () -> {
         Dialog dialog = screen.getDialog();
         if (dialog != null && dialog.getWindow() != null) {
           // Long nested screens (e.g. User Interface) render with a wrap-content
           // window that can be taller than the display and get clipped above the top.
-          dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
-          View decorView = dialog.getWindow().getDecorView();
-          View lv = findListView(decorView);
+          dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+          View lv = findListView(dialog.getWindow().getDecorView());
+          ViewGroup contentRoot = dialog.findViewById(android.R.id.content);
           if (lv != null) {
-            applyEdgeToEdge(lv);
+            addTitleBarAndInsets(contentRoot, lv, screen.getTitle());
           }
         }
       };
@@ -282,7 +347,6 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   private void showVersionInfoDialog()
   {
     String message = getString(R.string.about_version_name_label, com.graze17.BuildConfig.VERSION_NAME)
-            + "\n" + getString(R.string.about_version_code_label, com.graze17.BuildConfig.VERSION_CODE)
             + "\n" + getString(R.string.about_build_date_label, com.graze17.BuildConfig.BUILD_DATE)
             + "\n" + getString(R.string.about_commit_hash_label, com.graze17.BuildConfig.GIT_COMMIT_HASH);
 
