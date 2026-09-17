@@ -1,9 +1,5 @@
 # Graze17 - GrazeRSS targeting Android 17
 
-![Play Store Logo](https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png)
-
-## [Link to Play Store](https://play.google.com/store/apps/details?id=com.graze17)
-
 * This is the Graze17 source repository.
 * Graze17 is based on GrazeTEN, without which Graze17 would not exist.
 * GrazeTEN was based on GrazeRSS, without which GrazeTEN would not exist.
@@ -14,18 +10,14 @@
 
 ---
 
-The goal of Graze17 is to provide the same functionality of previous versions, but on a modern
-version of Android, addressing the security issues that needed updated to target the new API version.  The initial release targets API level 36 - Android 16.
+The goal of Graze17 is to provide the same functionality of previous versions, but on a modern version of Android, addressing the security issues that needed updated to target the new API version.  The initial release targets API level 37 - Android 17.
 
 ---
 
-The initial release fixes the issues in my particular use of the software in that it was getting increasingly difficult to find an APK for it and also that Google are planning to gradually further restrict side-loading, especially of unsigned apps.  Thus, it may
-not work entirely for *your* needs.  For example, I do not use Mobilizers or service providers other than NewsBlur.
-
+The initial release fixes the issues in my particular use of the software in that it was getting increasingly difficult to find an APK for it and I then found that it would refuse to run under Android 17 after working OK for Android 16.  It may not work entirely for *your* needs.  For example, I do not use Mobilizers or service providers other than NewsBlur.
 
 ## Source code and reporting issues
 
 Issue reports can be filed [here](https://github.com/ediflyer/Graze17/issues).  However, development time is very limited and likely restricted to major functionality or security issues; you are much more likely to get an issue fixed by providing mergeable pull requests.
-
 
 The source code for Graze17 is [here](https://github.com/ediflyer/Graze17).
