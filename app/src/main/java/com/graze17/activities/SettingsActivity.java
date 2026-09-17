@@ -115,6 +115,17 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
       });
     }
 
+    Preference aboutVersionPref = findPreference("about_version_preference");
+    if (aboutVersionPref != null) {
+      aboutVersionPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+          showVersionInfoDialog();
+          return true;
+        }
+      });
+    }
+
   }
 
   @Override
@@ -150,6 +161,9 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
       Runnable applyFix = () -> {
         Dialog dialog = screen.getDialog();
         if (dialog != null && dialog.getWindow() != null) {
+          // Long nested screens (e.g. User Interface) render with a wrap-content
+          // window that can be taller than the display and get clipped above the top.
+          dialog.getWindow().setLayout(android.view.ViewGroup.LayoutParams.MATCH_PARENT, android.view.ViewGroup.LayoutParams.MATCH_PARENT);
           View decorView = dialog.getWindow().getDecorView();
           View lv = findListView(decorView);
           if (lv != null) {
@@ -263,5 +277,24 @@ public class SettingsActivity extends PreferenceActivity implements IEntryModelU
   {
     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/EDIflyer/Graze17"));
     startActivity(browserIntent);
+  }
+
+  private void showVersionInfoDialog()
+  {
+    String message = getString(R.string.about_version_name_label, com.graze17.BuildConfig.VERSION_NAME)
+            + "\n" + getString(R.string.about_version_code_label, com.graze17.BuildConfig.VERSION_CODE)
+            + "\n" + getString(R.string.about_build_date_label, com.graze17.BuildConfig.BUILD_DATE)
+            + "\n" + getString(R.string.about_commit_hash_label, com.graze17.BuildConfig.GIT_COMMIT_HASH);
+
+    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    builder.setTitle(R.string.about_version_title)
+           .setMessage(message)
+           .setIcon(R.drawable.grazerss_logo_32x32)
+           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+             public void onClick(DialogInterface dialog, int which) {
+               dialog.dismiss();
+             }
+           });
+    builder.create().show();
   }
 }

@@ -244,6 +244,12 @@ Otherwise you will be asked again for your credentials every two weeks.
 	<string name="about_license_summary">View app license information</string>
 	<string name="about_github_title">GitHub Repository</string>
 	<string name="about_github_summary">Visit the project on GitHub</string>
+	<string name="about_version_title">Version info</string>
+	<string name="about_version_summary">Display version information</string>
+	<string name="about_version_name_label">Version: %1$s</string>
+	<string name="about_version_code_label">Build number: %1$d</string>
+	<string name="about_build_date_label">Build date: %1$s</string>
+	<string name="about_commit_hash_label">Commit: %1$s</string>
 	<string name="reject">Reject</string>
 	<string name="agree">Agree</string>
 	<string name="shared">shared</string>

@@ -2,6 +2,23 @@ plugins {
     id 'com.android.application'
 }
 
+def gitCommitHash = {
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
+            standardOutput = stdout
+            ignoreExitValue = true
+        }
+        def hash = stdout.toString().trim()
+        return hash.isEmpty() ? "unknown" : hash
+    } catch (Exception ignored) {
+        return "unknown"
+    }
+}()
+
+def buildDate = new Date().format("yyyy-MM-dd HH:mm")
+
 android {
     namespace = 'com.graze17'
     compileSdk = 37
@@ -12,6 +29,13 @@ android {
         targetSdkVersion = 37
         versionCode = 316
         versionName = "3.1.6"
+
+        buildConfigField "String", "GIT_COMMIT_HASH", "\"${gitCommitHash}\""
+        buildConfigField "String", "BUILD_DATE", "\"${buildDate}\""
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 
     compileOptions {
