@@ -147,6 +147,10 @@ class SyncChangedArticlesStatusJob extends SyncJob
       return 0;
     }
 
+    // Capture before syncing, since synchronizing articles clears the pending read-state flag.
+    int noOfArticlesMarkedRead = getEntryManager().getPendingReadStateArticleCount();
+    getSyncJobStatus().noOfArticlesMarkedRead += noOfArticlesMarkedRead;
+
     int noOfEntriesUpdated = getEntryManager().getSyncInterface().synchronizeArticles(getEntryManager(), this);
     getSyncJobStatus().noOfEntriesUpdated += noOfEntriesUpdated;
     if (noOfEntriesUpdated > 0)
@@ -710,7 +714,8 @@ public class SynchronizationService extends Service
 
         PL.log("Run Mark - Mission accomplished. -> complete ", this);
 
-        result = new SynchronizeModelSucceeded(syncJobStatus.noOfEntriesUpdated, syncJobStatus.noOfEntriesFetched);
+        result = new SynchronizeModelSucceeded(syncJobStatus.noOfEntriesUpdated, syncJobStatus.noOfEntriesFetched,
+            syncJobStatus.noOfArticlesMarkedRead);
       }
       catch (Throwable throwable)
       {

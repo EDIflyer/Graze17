@@ -127,7 +127,6 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
   private ProgressBar         progressBar;
   private TextView            progressDescription;
   private LinearLayout progressContainer;
-  private boolean             progressPanelManuallyHiddenDuringSync;
   private boolean             syncUiActive;
 
   private GoogleAdsUtil       googleAdsUtil;
@@ -158,7 +157,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     // Show progress container if available and not intentionally hidden by the user during this sync run
     if (progressContainer != null)
     {
-      if (syncInProgress && progressPanelManuallyHiddenDuringSync)
+      if (syncInProgress && getEntryManager().isProgressPanelManuallyHiddenDuringSync())
       {
         progressContainer.setVisibility(View.GONE);
       }
@@ -379,8 +378,10 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
   protected void instantiateMarkAllReadDialog(DBQuery dbq)
   {
+    // Don't inherit the article list's display/pagination limit here - marking all as read
+    // must always apply to the full filtered set, not just the page currently shown on screen.
     instantiateMarkAllReadDialog(dbq.getFilterLabel(), dbq.getFilterFeedId(), dbq.getStartDate(), dbq.getDateLimit(),
-        dbq.isSortOrderAscending(), dbq.getLimit());
+        dbq.isSortOrderAscending(), 0);
   }
 
   protected void instantiateMarkAllReadDialog(final String filterLabel, final Long filterFeedId, final long startDate, final long dateLimit,
@@ -460,7 +461,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
       public void run()
       {
-        progressPanelManuallyHiddenDuringSync = false;
+        getEntryManager().setProgressPanelManuallyHiddenDuringSync(false);
         syncUiActive = false;
         updateButtons();
         updateControlPanelTitle();
@@ -470,13 +471,17 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
         {
           SynchronizeModelSucceeded succeeded = (SynchronizeModelSucceeded) result;
           int noOfEntriesFetched = succeeded.getNoOfEntriesFetched();
+          int noOfArticlesMarkedRead = succeeded.getNoOfArticlesMarkedRead();
 
           if (succeeded.getNoOfEntriesUpdated() > 0 || noOfEntriesFetched > 0)
           {
             refreshUI();
-            Toast.makeText(AbstractNewsRobListActivity.this, 
-                "Sync complete - " + noOfEntriesFetched + " new articles downloaded",
-                Toast.LENGTH_SHORT).show();
+            String message = "Sync complete - " + noOfEntriesFetched + " new articles downloaded";
+            if (noOfArticlesMarkedRead > 0)
+            {
+              message += ", " + noOfArticlesMarkedRead + " marked as read";
+            }
+            Toast.makeText(AbstractNewsRobListActivity.this, message, Toast.LENGTH_SHORT).show();
             // Toast.makeText(AbstractNewsRobListActivity.this,
             // succeeded.getMessage(),
             // Toast.LENGTH_LONG).show(); // I18N
@@ -515,7 +520,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 
   public void modelUpdateStarted(boolean fastSyncOnly)
   {
-    progressPanelManuallyHiddenDuringSync = false;
+    getEntryManager().setProgressPanelManuallyHiddenDuringSync(false);
     syncUiActive = true;
     runOnUiThread(refreshUIRunnable);
 
@@ -926,6 +931,10 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     getSupportActionBar().setHomeAsUpIndicator(R.drawable.gen_logo_32dp);
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     toolbar.setTitleTextColor(Color.WHITE);
+    // By default AppCompat reserves a large gap (~72dp) after the nav icon for the title,
+    // which is much wider than the inset before the icon. Match them so title/buttons get
+    // more room and the icon/title/buttons all line up evenly.
+    toolbar.setContentInsetStartWithNavigation(toolbar.getContentInsetStart());
     // Set gradient background
     boolean isLightTheme = getEntryManager().isLightColorSchemeSelected();
     toolbar.setBackgroundResource(isLightTheme ? R.drawable.list_header_background : R.drawable.list_header_background_dark);
@@ -1201,7 +1210,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     syncUiActive = true;
 
     // New sync request should start with progress visible unless user hides it again.
-    progressPanelManuallyHiddenDuringSync = false;
+    getEntryManager().setProgressPanelManuallyHiddenDuringSync(false);
 
     // Show progress immediately when user taps refresh
     activateProgressIndicator();
@@ -1487,7 +1496,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     {
       if (syncInProgress)
       {
-        progressPanelManuallyHiddenDuringSync = true;
+        getEntryManager().setProgressPanelManuallyHiddenDuringSync(true);
       }
       hideProgressBar();
     }
@@ -1495,7 +1504,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     {
       if (syncInProgress)
       {
-        progressPanelManuallyHiddenDuringSync = false;
+        getEntryManager().setProgressPanelManuallyHiddenDuringSync(false);
       }
       showProgressBar();
     }

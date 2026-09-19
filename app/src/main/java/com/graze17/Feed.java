@@ -52,7 +52,7 @@ public class Feed
   private float               webScale                              = -1.0f;
   private float               feedScale                             = -1.0f;
 
-  private boolean             javaScriptEnabled                     = false;
+  private boolean             javaScriptEnabled                     = true;
   private boolean             fitToWidthEnabled                     = true;
 
   public String getAtomId()

@@ -99,6 +99,7 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
   {
     int noOfEntriesFetched = 0;
     int noOfEntriesUpdated = 0;
+    int noOfArticlesMarkedRead = 0;
   }
 
   public static final String  ACTION_BAR_BOTTOM                                    = "bottom";
@@ -321,6 +322,20 @@ public class EntryManager implements SharedPreferences.OnSharedPreferenceChangeL
 
   private Map<DBQuery, Boolean>                       isMarkAllReadPossibleCache;
   private boolean                                     isModelCurrentlyUpdated   = false;
+
+  // Tracks whether the user manually hid the sync progress panel for the currently running sync.
+  // Kept here (rather than on the Activity) so it survives navigating between screens while a sync is in progress.
+  private boolean                                     progressPanelManuallyHiddenDuringSync;
+
+  public boolean isProgressPanelManuallyHiddenDuringSync()
+  {
+    return progressPanelManuallyHiddenDuringSync;
+  }
+
+  public void setProgressPanelManuallyHiddenDuringSync(boolean hidden)
+  {
+    progressPanelManuallyHiddenDuringSync = hidden;
+  }
 
   private Long                                        lastUpdateWidgetUpdate;
 

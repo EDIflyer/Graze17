@@ -1436,6 +1436,7 @@ public class DB extends SQLiteOpenHelper
           cv.put(Feeds.WEB_SCALE, -1f);
           cv.put(Feeds.FEED_SCALE, -1f);
           cv.put(Feeds.FIT_TO_WIDTH_ENABLED, 1);
+          cv.put(Feeds.JAVASCRIPT_ENABLED, 1);
 
           entry.setFeedId(dbase.insert(Feeds.TABLE_NAME, null, cv));
         }
