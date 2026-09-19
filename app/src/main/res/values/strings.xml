@@ -238,7 +238,7 @@ Otherwise you will be asked again for your credentials every two weeks.
 	<string name="dialog_n_articles_will_be_marked_as_read">%s unread articles will be marked as read.</string>
 	<string name="new_version_available_title">Update available</string>
 	<string name="new_version_available_summary">An update of graze17 is available!</string>
-	<string name="license">Graze17 License</string>
+	<string name="license">Graze17 MIT License</string>
 	<string name="about_section_title">About</string>
 	<string name="about_license_title">License</string>
 	<string name="about_license_summary">View app license information</string>
@@ -252,6 +252,6 @@ Otherwise you will be asked again for your credentials every two weeks.
 	<string name="reject">Reject</string>
 	<string name="agree">Agree</string>
 	<string name="shared">shared</string>
-	<string name="license_text">MIT License\n\nCopyright (c) 2020 M. Kamp, T. Tabbal, nayfield, ediflyer et al\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
+	<string name="license_text">Copyright (c) 2020 M. Kamp, T. Tabbal, nayfield, ediflyer et al\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</string>
     <string name="menu_item_show_article_info">Show Info (Support Only)</string>
 </resources>
