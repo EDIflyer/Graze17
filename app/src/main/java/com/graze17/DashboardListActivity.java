@@ -21,9 +21,11 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.appcompat.widget.Toolbar;
 
 import com.graze17.activities.AbstractNewsRobListActivity;
 import com.graze17.activities.ArticleListActivity;
@@ -95,7 +97,7 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
   public String getDefaultStatusBarTitle()
   {
     String appName = getResources().getString(R.string.app_name);
-    return String.format("%s %s %s", appName, getEntryManager().getMyVersionName(), getLastSyncTimeAsString());
+    return String.format("%s %s", appName, getEntryManager().getMyVersionName());
   }
 
   private String getLastSyncTimeAsString()
@@ -475,6 +477,12 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
     super.onPostCreate(savedInstanceState);
     hideSortOrderToggle();
 
+    Toolbar toolbar = findViewById(R.id.activity_actionbar);
+    if (toolbar != null)
+    {
+      toolbar.setOnClickListener(v ->
+          Toast.makeText(this, getToastMessage(), Toast.LENGTH_LONG).show());
+    }
   }
 
 
