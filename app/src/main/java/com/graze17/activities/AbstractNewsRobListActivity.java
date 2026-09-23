@@ -30,11 +30,14 @@ import android.animation.ObjectAnimator;
 import android.widget.AbsoluteLayout;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
@@ -44,6 +47,7 @@ import com.graze17.BackendProvider;
 import com.graze17.DBQuery;
 import com.graze17.DashboardListActivity;
 import com.graze17.EntryManager;
+import com.graze17.Feed;
 import com.graze17.IEntryModelUpdateListener;
 import com.graze17.NewsRob;
 import com.graze17.PL;
@@ -62,7 +66,7 @@ import com.graze17.util.Timing;
 import com.graze17.util.U;
 
 public abstract class AbstractNewsRobListActivity extends AppCompatActivity
-    implements IEntryModelUpdateListener, View.OnLongClickListener
+    implements IEntryModelUpdateListener, View.OnCreateContextMenuListener
 {
   private static final String TAG                         = AbstractNewsRobListActivity.class.getSimpleName();
 
@@ -693,12 +697,12 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     }
     if (positionOfSelectedItemOnLongPress > -1)
     {
-      onCreateContextMenu(menu, v, menuInfo, positionOfSelectedItemOnLongPress);
+      onCreateContextMenu((Menu) menu, v, positionOfSelectedItemOnLongPress);
     }
     super.onCreateContextMenu(menu, v, menuInfo);
   }
 
-  protected abstract void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo, int positionOfSelectedItemOnLongPress);
+  protected abstract void onCreateContextMenu(Menu menu, View v, int positionOfSelectedItemOnLongPress);
 
   @Override
   protected Dialog onCreateDialog(int id)
@@ -802,21 +806,59 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
 //    return result;
   }
 
-  public boolean onLongClick(View v)
+  private void showSearchDialog()
   {
-    try
+    View dialogView = getLayoutInflater().inflate(R.layout.dialog_search, null);
+    final EditText searchTerm = dialogView.findViewById(R.id.search_term);
+    final RadioButton currentFeedOption = dialogView.findViewById(R.id.search_scope_current_feed);
+    final RadioButton allFeedsOption = dialogView.findViewById(R.id.search_scope_all_feeds);
+    final CheckBox unreadOnlyOption = dialogView.findViewById(R.id.search_unread_only);
+
+    final Long currentFeedId = (getDbQuery() != null) ? getDbQuery().getFilterFeedId() : null;
+    if (currentFeedId != null)
     {
-      positionOfSelectedItemOnLongPress = getListView().getPositionForView(v);
-      if (positionOfSelectedItemOnLongPress > -1)
-      {
-        openContextMenu(getListView());
-      }
-      return true;
+      Feed f = getEntryManager().findFeedById(currentFeedId);
+      String feedTitle = (f != null) ? f.getTitle() : null;
+      currentFeedOption.setText(feedTitle != null ? "Current feed only (" + feedTitle + ")" : "Current feed only");
+      currentFeedOption.setChecked(true);
     }
-    catch (NullPointerException npe)
+    else
     {
+      currentFeedOption.setVisibility(View.GONE);
+      allFeedsOption.setChecked(true);
     }
-    return false;
+
+    new AlertDialog.Builder(this)
+        .setTitle("Search Articles")
+        .setView(dialogView)
+        .setPositiveButton("Search", new DialogInterface.OnClickListener()
+        {
+          @Override
+          public void onClick(DialogInterface dialog, int which)
+          {
+            String term = searchTerm.getText().toString().trim();
+            if (term.isEmpty())
+            {
+              Toast.makeText(AbstractNewsRobListActivity.this, "Enter a search term", Toast.LENGTH_SHORT).show();
+              return;
+            }
+            Long feedIdFilter = (currentFeedId != null && currentFeedOption.isChecked()) ? currentFeedId : null;
+            launchSearchResults(term, feedIdFilter, unreadOnlyOption.isChecked());
+          }
+        })
+        .setNegativeButton(android.R.string.cancel, null)
+        .show();
+  }
+
+  private void launchSearchResults(String term, Long feedIdFilter, boolean unreadOnly)
+  {
+    Intent intent = new Intent(this, ArticleListActivity.class);
+    if (feedIdFilter != null)
+      intent.putExtra(UIHelper.EXTRA_KEY_FILTER_FEED, (long) feedIdFilter);
+    intent.putExtra(UIHelper.EXTRA_KEY_TITLE_FILTER, term);
+    intent.putExtra(UIHelper.EXTRA_KEY_UNREAD_ONLY_OVERRIDE, unreadOnly);
+    intent.putExtra(UIHelper.EXTRA_KEY_TITLE, "Search: \"" + term + "\"");
+    startActivity(intent);
   }
 
   @Override
@@ -866,6 +908,9 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     } else if (item.getItemId() == R.id.menu_subscribe_feed) {
         Intent intent = new Intent().setClass(this, SubscribeFeedActivity.class);
         startActivity(intent);
+        return true;
+    } else if (item.getItemId() == R.id.menu_search) {
+        showSearchDialog();
         return true;
     } else if (item.getItemId() == R.id.menu_toggle_theme) {
         getEntryManager().toggleTheme();

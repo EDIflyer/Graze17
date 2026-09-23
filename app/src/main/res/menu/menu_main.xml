@@ -22,6 +22,11 @@
         android:title="Subscribe Feed"
         app:showAsAction="never"/>
     <item
+        android:id="@+id/menu_search"
+        android:title="Search"
+        android:icon="@android:drawable/ic_menu_search"
+        app:showAsAction="never"/>
+    <item
         android:id="@+id/menu_toggle_theme"
         android:title="Day/Night"
         app:showAsAction="never"/>

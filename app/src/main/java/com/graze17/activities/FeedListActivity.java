@@ -6,8 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
@@ -20,6 +19,7 @@ import com.graze17.Entry;
 import com.graze17.Feed;
 import com.graze17.R;
 import com.graze17.ReadState;
+import com.graze17.util.U;
 
 public class FeedListActivity extends AbstractNewsRobListActivity
 {
@@ -325,7 +325,7 @@ public class FeedListActivity extends AbstractNewsRobListActivity
   }
 
   @Override
-  protected void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo, int selectedPosition)
+  protected void onCreateContextMenu(Menu menu, View v, int selectedPosition)
   {
 
     String title = getSelectedTitle(selectedPosition);
@@ -334,14 +334,14 @@ public class FeedListActivity extends AbstractNewsRobListActivity
 
     long feedId = getSelectedFeedId(selectedPosition);
 
-    menu.setHeaderTitle(title);
+    U.addMenuHeader(menu, title);
     menu.add(0, MENU_ITEM_MANAGE_FEED_ID, 0, R.string.menu_item_manage_feed);
     menu.add(0, MENU_ITEM_MARK_ALL_READ_ID, 0, R.string.menu_item_mark_all_read);
 
     DBQuery dbq = new DBQuery(getDbQuery());
     dbq.setFilterFeedId(feedId);
     if (!getEntryManager().isMarkAllReadPossible(dbq))
-      menu.getItem(1).setEnabled(false);
+      menu.findItem(MENU_ITEM_MARK_ALL_READ_ID).setEnabled(false);
 
     boolean feedCanBeUnsubscribed = false;
     Feed f = getEntryManager().findFeedById(feedId);

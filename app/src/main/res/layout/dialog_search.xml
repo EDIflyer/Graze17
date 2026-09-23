@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="8dp">
+
+    <EditText
+        android:id="@+id/search_term"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search article titles"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"/>
+
+    <RadioGroup
+        android:id="@+id/search_scope"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="16dp">
+
+        <RadioButton
+            android:id="@+id/search_scope_current_feed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current feed only"/>
+
+        <RadioButton
+            android:id="@+id/search_scope_all_feeds"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="All feeds"
+            android:checked="true"/>
+
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/search_unread_only"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Unread articles only"/>
+
+</LinearLayout>

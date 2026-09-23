@@ -32,6 +32,8 @@ public class UIHelper
   public static final String  EXTRA_KEY_START_DATE           = "START_DATE";
   public static final String  EXTRA_KEY_TITLE                = "TITLE";
   public static final String  EXTRA_KEY_SORT_ORDER_ASCENDING = "SORT_ASC";
+  public static final String  EXTRA_KEY_TITLE_FILTER         = "TITLE_FILTER";
+  public static final String  EXTRA_KEY_UNREAD_ONLY_OVERRIDE = "UNREAD_ONLY_OVERRIDE";
   private static final String EXTRA_KEY_HIDE_READ_ARTICLES   = "HIDE_READ_ARTICLES";
 
   static Pattern              PATTERN_HTTP_LINK              = Pattern.compile("(https?://[a-z0-9_:\\%\\+\\-\\/?~=.,&#!]*[^.!? ()\"“”])",
@@ -71,6 +73,13 @@ public class UIHelper
     DBQuery dbq = new DBQuery(entryManager, filterLabel, filterFeedId);
     dbq.setStartDate(startDate);
     dbq.setSortOrderAscending(sortOrderAscending);
+    if (extras != null)
+    {
+      if (extras.containsKey(UIHelper.EXTRA_KEY_TITLE_FILTER))
+        dbq.setTitleFilter(extras.getString(UIHelper.EXTRA_KEY_TITLE_FILTER));
+      if (extras.containsKey(UIHelper.EXTRA_KEY_UNREAD_ONLY_OVERRIDE))
+        dbq.setShouldHideReadItemsWithoutUpdatingThePreference(extras.getBoolean(UIHelper.EXTRA_KEY_UNREAD_ONLY_OVERRIDE));
+    }
     PL.log("dbq=" + dbq, entryManager.getContext()); // REMOVE TODO
 
     return dbq;

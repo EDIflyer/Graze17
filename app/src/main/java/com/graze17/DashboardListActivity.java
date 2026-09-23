@@ -13,8 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
@@ -32,6 +31,7 @@ import com.graze17.activities.ArticleListActivity;
 import com.graze17.activities.FeedListActivity;
 import com.graze17.activities.SettingsActivity;
 import com.graze17.activities.UIHelper;
+import com.graze17.util.U;
 
 public class DashboardListActivity extends AbstractNewsRobListActivity
 {
@@ -339,14 +339,14 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
   }
 
   @Override
-  protected void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo, int selectedPosition)
+  protected void onCreateContextMenu(Menu menu, View v, int selectedPosition)
   {
 
     Cursor c = (Cursor) sca.getItem(selectedPosition);
     String label = c.getString(0);
     int ord = c.getInt(3);
 
-    menu.setHeaderTitle(label);
+    U.addMenuHeader(menu, label);
     menu.add(0, MENU_ITEM_MARK_ALL_READ_ID, 0, R.string.menu_item_mark_all_read);
 
     DBQuery dbq = new DBQuery(getDbQuery());
@@ -364,7 +364,7 @@ public class DashboardListActivity extends AbstractNewsRobListActivity
 
     if (!getEntryManager().isMarkAllReadPossible(dbq))
     {
-      menu.getItem(0).setEnabled(false);
+      menu.findItem(MENU_ITEM_MARK_ALL_READ_ID).setEnabled(false);
     }
 
   }

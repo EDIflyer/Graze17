@@ -18,6 +18,7 @@ public class DBQuery
   private long         dateLimit;
   private EntryManager entryManager;
   private int          limit;
+  private String       titleFilter;
 
   private String       internalRepresentation;
 
@@ -25,7 +26,7 @@ public class DBQuery
   {
     if (internalRepresentation == null)
       internalRepresentation = "" + hideReadItems + "!" + filterLabel + "!" + filterFeed + "!" + startDate + "!" + changed + "!" + sortAscending
-          + "!" + dateLimit + " limit=" + limit;
+          + "!" + dateLimit + " limit=" + limit + " titleFilter=" + titleFilter;
     return internalRepresentation;
   }
 
@@ -66,6 +67,7 @@ public class DBQuery
     this.sortAscending = dbQuery.isSortOrderAscending();
     this.dateLimit = dbQuery.dateLimit;
     this.limit = dbQuery.limit;
+    this.titleFilter = dbQuery.titleFilter;
     changed = true;
   }
 
@@ -173,6 +175,18 @@ public class DBQuery
   {
     internalRepresentation = null;
     this.filterLabel = labelName;
+    changed = true;
+  }
+
+  public String getTitleFilter()
+  {
+    return titleFilter;
+  }
+
+  public void setTitleFilter(String titleFilter)
+  {
+    internalRepresentation = null;
+    this.titleFilter = titleFilter;
     changed = true;
   }
 

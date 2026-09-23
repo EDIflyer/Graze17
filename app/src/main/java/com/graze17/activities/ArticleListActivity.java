@@ -19,8 +19,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils.TruncateAt;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -252,7 +251,7 @@ public class ArticleListActivity extends AbstractNewsRobListActivity implements 
   }
 
   @Override
-  public void onCreateContextMenu(final ContextMenu menu, final View v, final ContextMenuInfo menuInfo, final int position)
+  public void onCreateContextMenu(final Menu menu, final View v, final int position)
   {
     final Entry entry = findEntryByPosition(position);
     if (entry != null)

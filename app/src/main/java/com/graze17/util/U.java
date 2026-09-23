@@ -23,14 +23,40 @@ import android.os.BatteryManager;
 import android.os.PowerManager;
 import android.os.Process;
 import android.os.Vibrator;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.Menu;
 
 import com.graze17.PL;
 import com.graze17.download.HtmlEntitiesDecoder;
 
 public class U
 {
+  private static final int MENU_ITEM_HEADER_ID = -1;
+
+  /**
+   * Adds a non-clickable title row as the first entry of a long-press menu, styled to look
+   * distinct from the actionable items below it (smaller, italic, muted color).
+   * ContextMenu.setHeaderTitle() renders as a blank box on many devices/themes,
+   * so a disabled MenuItem is used instead to keep every long-press menu consistent.
+   */
+  public static void addMenuHeader(final Menu menu, final String title)
+  {
+    if (title == null || title.trim().isEmpty())
+      return;
+    SpannableString styledTitle = new SpannableString(title.toUpperCase());
+    styledTitle.setSpan(new StyleSpan(Typeface.ITALIC), 0, styledTitle.length(), 0);
+    styledTitle.setSpan(new RelativeSizeSpan(0.8f), 0, styledTitle.length(), 0);
+    styledTitle.setSpan(new android.text.style.ForegroundColorSpan(Color.GRAY), 0, styledTitle.length(), 0);
+    // order must be 0 (Menu.NONE); Integer.MIN_VALUE is not a valid category and crashes MenuBuilder.
+    menu.add(Menu.NONE, MENU_ITEM_HEADER_ID, Menu.NONE, styledTitle).setEnabled(false);
+  }
+
 
   private static Pattern           PATTERN_HTML_TAGS       = Pattern.compile("</?[a-zA-Z-_]*?.*?/?\\s*?>");
   private static Pattern           PATTERN_BLANKS          = Pattern.compile("\\s+", Pattern.MULTILINE);

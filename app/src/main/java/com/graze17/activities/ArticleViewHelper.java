@@ -158,14 +158,16 @@ class ArticleViewHelper
   {
     final EntryManager entryManager = EntryManager.getInstance(owningActivity);
     final boolean isArticleContextMenu = menu instanceof ContextMenu;
-    if (isArticleContextMenu) {
-      ((ContextMenu) menu).setHeaderTitle("Article");
-    }
 
     final boolean alternateHRefAvailable = ((selectedEntry != null) && (selectedEntry.getAlternateHRef() != null));
     if (selectedEntry == null) {
       Log.e(TAG, "Oops. SelectedEntry was null.");
       return;
+    }
+
+    if (isArticleContextMenu) {
+      String headerTitle = selectedEntry.getTitle();
+      U.addMenuHeader(menu, (headerTitle != null && !headerTitle.trim().isEmpty()) ? headerTitle : "Article");
     }
 
     if (entryManager.isGoogleTv() && ((selectedEntry.getReadState() == ReadState.READ) || (selectedEntry.getReadState() == ReadState.UNREAD))) {

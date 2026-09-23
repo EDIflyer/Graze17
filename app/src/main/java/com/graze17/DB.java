@@ -1048,6 +1048,14 @@ public class DB extends SQLiteOpenHelper
   {
     // feed
     String sql = context.getString(R.string.sql_content_cursor_query);
+
+    // title search
+    if (query.getTitleFilter() != null && !query.getTitleFilter().trim().isEmpty())
+    {
+      sql = sql.replaceFirst("-- feeds-mark", "AND entries.TITLE LIKE ?\n   -- feeds-mark");
+      selectionArgs.add("%" + query.getTitleFilter().trim() + "%");
+    }
+
     if ((query.getFilterFeedId() == null) || "all articles".equals(query.getFilterFeedId()))
     {
       sql = Pattern.compile("-- feeds-mark.*?-- feeds-mark-end", Pattern.DOTALL).matcher(sql).replaceAll("");
