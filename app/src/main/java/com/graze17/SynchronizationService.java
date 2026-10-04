@@ -175,6 +175,9 @@ public class SynchronizationService extends Service
   private static final String  PREF_KEY_LAST_STARTED     = "com.graze17.synchronization.lastStarted";
   private static final int     FOREGROUND_NOTIFICATION_ID = 99017;
   private static final String  SYNC_CHANNEL_ID            = "graze17.sync";
+  // Android requires a foreground service to have a notification; when the user disabled the
+  // sync notification, use a minimal-importance channel so it stays unobtrusive.
+  private static final String  SYNC_CHANNEL_ID_HIDDEN     = "graze17.sync.hidden";
 
   private static WakeLock      wl;
   private Handler              handler;
@@ -251,6 +254,25 @@ public class SynchronizationService extends Service
         NotificationManager.IMPORTANCE_LOW);
     channel.setDescription("Background synchronization status");
     mNM.createNotificationChannel(channel);
+
+    NotificationChannel hidden = new NotificationChannel(
+        SYNC_CHANNEL_ID_HIDDEN,
+        "Synchronization (minimal)",
+        NotificationManager.IMPORTANCE_MIN);
+    hidden.setDescription("Minimal notification required by Android while syncing");
+    mNM.createNotificationChannel(hidden);
+  }
+
+  private boolean isSyncNotificationEnabled()
+  {
+    try
+    {
+      return getEntryManager().isSyncInProgressNotificationEnabled();
+    }
+    catch (Throwable t)
+    {
+      return true;
+    }
   }
 
   private Notification createForegroundNotification(boolean uploadOnly)
@@ -267,9 +289,15 @@ public class SynchronizationService extends Service
 
     android.app.PendingIntent pendingIntent = android.app.PendingIntent.getActivity(this, 0, openDashboardIntent, pendingIntentFlags);
 
+    final boolean visible = isSyncNotificationEnabled();
     Notification.Builder builder = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-        ? new Notification.Builder(this, SYNC_CHANNEL_ID)
+        ? new Notification.Builder(this, visible ? SYNC_CHANNEL_ID : SYNC_CHANNEL_ID_HIDDEN)
         : new Notification.Builder(this);
+
+    if (visible && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
+    {
+      builder.setForegroundServiceBehavior(Notification.FOREGROUND_SERVICE_IMMEDIATE);
+    }
 
     return builder
         .setSmallIcon(R.drawable.gen_auto_notification_icon)
@@ -832,15 +860,22 @@ public class SynchronizationService extends Service
   public void onStart(Intent intent, int startId)
   {
     super.onStart(intent, startId);
+    boolean uploadOnlyRequested = intent != null && ACTION_SYNC_UPLOAD_ONLY.equals(intent.getAction());
+    // Must be called promptly after startForegroundService(), and before any early return.
+    startSyncForeground(uploadOnlyRequested);
+
     if (intent == null)
     {
+      stopSyncForeground();
       stopSelf();
       getEntryManager().getNewsRobNotificationManager().cancelSyncInProgressNotification();
       Log.d(TAG, "onStart() called with intent == null. Stopping self.");
+      return;
     }
 
     if (getEntryManager().isModelCurrentlyUpdated())
     {
+      // Another sync is running and owns the notification; keep it visible.
       return;
     }
 
@@ -878,7 +913,6 @@ public class SynchronizationService extends Service
     }
     final boolean uploadOnly = uO;
     final boolean manualSync = mS;
-    startSyncForeground(uploadOnly);
     new Thread(new Runnable()
     {
 

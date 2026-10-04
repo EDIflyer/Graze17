@@ -105,6 +105,11 @@ public class UIHelper
       i.putExtra(UIHelper.EXTRA_KEY_START_DATE, dbq.getStartDate());
       url.a(UIHelper.EXTRA_KEY_START_DATE, String.valueOf(dbq.getStartDate()));
     }
+    if (dbq.getTitleFilter() != null && !dbq.getTitleFilter().trim().isEmpty())
+    {
+      i.putExtra(UIHelper.EXTRA_KEY_TITLE_FILTER, dbq.getTitleFilter());
+      url.a(UIHelper.EXTRA_KEY_TITLE_FILTER, dbq.getTitleFilter());
+    }
     url.a(EXTRA_KEY_HIDE_READ_ARTICLES, String.valueOf(dbq.shouldHideReadItems()));
 
     i.putExtra(UIHelper.EXTRA_KEY_SORT_ORDER_ASCENDING, dbq.isSortOrderAscending());

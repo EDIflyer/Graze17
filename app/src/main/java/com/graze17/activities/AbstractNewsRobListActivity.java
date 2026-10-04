@@ -812,7 +812,7 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
     final EditText searchTerm = dialogView.findViewById(R.id.search_term);
     final RadioButton currentFeedOption = dialogView.findViewById(R.id.search_scope_current_feed);
     final RadioButton allFeedsOption = dialogView.findViewById(R.id.search_scope_all_feeds);
-    final CheckBox unreadOnlyOption = dialogView.findViewById(R.id.search_unread_only);
+    final View noResults = dialogView.findViewById(R.id.search_no_results);
 
     final Long currentFeedId = (getDbQuery() != null) ? getDbQuery().getFilterFeedId() : null;
     if (currentFeedId != null)
@@ -828,35 +828,58 @@ public abstract class AbstractNewsRobListActivity extends AppCompatActivity
       allFeedsOption.setChecked(true);
     }
 
-    new AlertDialog.Builder(this)
+    final AlertDialog searchDialog = new AlertDialog.Builder(this)
         .setTitle("Search Articles")
         .setView(dialogView)
-        .setPositiveButton("Search", new DialogInterface.OnClickListener()
-        {
-          @Override
-          public void onClick(DialogInterface dialog, int which)
-          {
-            String term = searchTerm.getText().toString().trim();
-            if (term.isEmpty())
-            {
-              Toast.makeText(AbstractNewsRobListActivity.this, "Enter a search term", Toast.LENGTH_SHORT).show();
-              return;
-            }
-            Long feedIdFilter = (currentFeedId != null && currentFeedOption.isChecked()) ? currentFeedId : null;
-            launchSearchResults(term, feedIdFilter, unreadOnlyOption.isChecked());
-          }
-        })
+        .setPositiveButton("Search", null)
         .setNegativeButton(android.R.string.cancel, null)
-        .show();
+        .create();
+    searchDialog.show();
+
+    // Set after show() so the dialog stays open when there are no results.
+    searchDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener()
+    {
+      @Override
+      public void onClick(View v)
+      {
+        noResults.setVisibility(View.GONE);
+        String term = searchTerm.getText().toString().trim();
+        if (term.isEmpty())
+        {
+          Toast.makeText(AbstractNewsRobListActivity.this, "Enter a search term", Toast.LENGTH_SHORT).show();
+          return;
+        }
+        Long feedIdFilter = (currentFeedId != null && currentFeedOption.isChecked()) ? currentFeedId : null;
+
+        DBQuery probe = new DBQuery(getEntryManager(), null, feedIdFilter);
+        probe.setTitleFilter(term);
+        Cursor c = getEntryManager().getContentCursor(probe);
+        boolean found;
+        try
+        {
+          found = c.getCount() > 0;
+        }
+        finally
+        {
+          c.close();
+        }
+        if (!found)
+        {
+          noResults.setVisibility(View.VISIBLE);
+          return;
+        }
+        searchDialog.dismiss();
+        launchSearchResults(term, feedIdFilter);
+      }
+    });
   }
 
-  private void launchSearchResults(String term, Long feedIdFilter, boolean unreadOnly)
+  private void launchSearchResults(String term, Long feedIdFilter)
   {
     Intent intent = new Intent(this, ArticleListActivity.class);
     if (feedIdFilter != null)
       intent.putExtra(UIHelper.EXTRA_KEY_FILTER_FEED, (long) feedIdFilter);
     intent.putExtra(UIHelper.EXTRA_KEY_TITLE_FILTER, term);
-    intent.putExtra(UIHelper.EXTRA_KEY_UNREAD_ONLY_OVERRIDE, unreadOnly);
     intent.putExtra(UIHelper.EXTRA_KEY_TITLE, "Search: \"" + term + "\"");
     startActivity(intent);
   }

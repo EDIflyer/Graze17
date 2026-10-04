@@ -39,11 +39,20 @@
 
     </RadioGroup>
 
-    <CheckBox
-        android:id="@+id/search_unread_only"
+    <TextView
+        android:id="@+id/search_hint"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Unread articles only"/>
+        android:text="Toggle between unread and all article views to change what is searched."/>
+
+    <TextView
+        android:id="@+id/search_no_results"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="No articles found"
+        android:textColor="#D32F2F"
+        android:visibility="gone"/>
 
 </LinearLayout>
